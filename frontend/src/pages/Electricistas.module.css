@@ -1,0 +1,233 @@
+.page { animation: fadeUp 0.35s ease both; }
+
+/* ── Controles ── */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  align-items: center;
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filters {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 13px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.18s;
+  font-family: var(--font-sans);
+  white-space: nowrap;
+}
+.filterBtn:hover {
+  border-color: var(--yellow-dim);
+  color: var(--yellow);
+  background: var(--yellow-glow);
+}
+.filterBtnActive {
+  background: rgba(245, 197, 24, 0.1);
+  border-color: var(--yellow-dim);
+  color: var(--yellow);
+}
+
+.sortSelect {
+  width: auto;
+  min-width: 160px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a8090' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.resultCount {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  margin-bottom: 1rem;
+}
+
+/* ── Grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* ── Card ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem;
+  transition: border-color 0.18s, transform 0.18s;
+}
+.card:hover {
+  border-color: var(--yellow-dim);
+  transform: translateY(-2px);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(245, 197, 24, 0.12);
+  border: 2px solid rgba(245, 197, 24, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 1px;
+  color: var(--yellow);
+  flex-shrink: 0;
+}
+
+.nombre {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.zona {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.badges {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 0.6rem;
+}
+
+.especialidades {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 0.75rem;
+}
+
+.esp {
+  background: rgba(42, 47, 56, 0.8);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 10px;
+  padding: 2px 8px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 0.85rem;
+}
+
+.stars {
+  color: var(--yellow);
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.ratingNum {
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.ratingCount {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+}
+
+.tarifa {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.tarifaUnit {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.contactBtn {
+  font-size: 12px;
+  padding: 5px 14px;
+}
+
+/* ── Empty state ── */
+.empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.empty span { font-size: 36px; }
+.empty p    { font-size: 14px; }
+
+/* ── CTA banner ── */
+.ctaBanner {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--yellow);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 14px;
+  color: var(--muted);
+}
+.ctaBanner strong { color: var(--text); }
+
+@media (max-width: 580px) {
+  .controls { flex-direction: column; align-items: stretch; }
+  .searchInput { min-width: auto; }
+  .ctaBanner { flex-direction: column; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .grid { gap: 0.75rem; }
+  .card { padding: 0.9rem; }
+  .sortSelect { min-width: 0; width: 100%; }
+}

@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Electricista {
+  id             Int      @id @default(autoincrement())
+  nombre         String
+  apellido       String
+  email          String   @unique
+  password       String?
+  googleId       String?  @unique
+  telefono       String
+  matricula      String?
+  provincia      String
+  zona           String
+  descripcion    String?
+  especialidades String[]
+  plan           String   @default("free")
+  verificado     Boolean  @default(false)
+  activo         Boolean  @default(true)
+  vacaciones     Boolean  @default(false)
+  rating         Float    @default(0)
+  reviews        Int      @default(0)
+  visitas        Int      @default(0)
+  creadoEn       DateTime @default(now())
+  actualizadoEn  DateTime @updatedAt
+  categoriaId    Int?
+  categoria      Categoria? @relation(fields: [categoriaId], references: [id])
+  localidad      String?
+  localidadId    String?
+  radioKm        Int?       @default(20)
+
+  pagos   Pago[]
+  resenas Resena[]
+}
+
+model Categoria {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  slug        String   @unique
+  emoji       String
+  descripcion String?
+  activa      Boolean  @default(true)
+  orden       Int      @default(0)
+  creadoEn    DateTime @default(now())
+
+  profesionales Electricista[]
+}
+
+model Admin {
+  id          Int       @id @default(autoincrement())
+  nombre      String
+  email       String    @unique
+  password    String
+  rol         String    @default("admin")
+  activo      Boolean   @default(true)
+  creadoEn    DateTime  @default(now())
+  ultimoLogin DateTime?
+}
+model Pago {
+  id             Int      @id @default(autoincrement())
+  electricistaId Int
+  monto          Float
+  estado         String   @default("pendiente")
+  mpPaymentId    String?
+  creadoEn       DateTime @default(now())
+
+  electricista Electricista @relation(fields: [electricistaId], references: [id])
+}
+
+model Resena {
+  id             Int      @id @default(autoincrement())
+  electricistaId Int
+  autor          String
+  rating         Int
+  comentario     String?
+  creadoEn       DateTime @default(now())
+
+  electricista Electricista @relation(fields: [electricistaId], references: [id])
+}

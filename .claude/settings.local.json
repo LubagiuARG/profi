@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(npm run dev:backend)",
+      "Bash(npm run dev:frontend)",
+      "Bash(npm run build:frontend)",
+      "Bash(npm run preview:frontend)",
+      "Bash(npm run start:backend)",
+      "Bash(npm run scrape)",
+      "Bash(npm run dev --workspace:*)",
+      "Bash(npm run build --workspace:*)",
+      "Bash(cd backend && npx prisma:*)",
+      "Bash(npx prisma:*)",
+      "Bash(node services/seed.js)",
+      "Bash(git status)",
+      "Bash(git status:*)",
+      "Bash(git diff)",
+      "Bash(git diff:*)",
+      "Bash(git log)",
+      "Bash(git log:*)",
+      "Bash(git branch)",
+      "Bash(git branch:*)",
+      "Bash(git show:*)",
+      "Bash(git remote:*)",
+      "Bash(ls)",
+      "Bash(ls:*)",
+      "Bash(cat package.json)",
+      "Bash(cat backend/package.json)",
+      "Bash(cat frontend/package.json)",
+      "Bash(cat backend/prisma/schema.prisma)"
+    ]
+  }
+}

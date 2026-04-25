@@ -1,0 +1,343 @@
+.page { animation: fadeUp 0.35s ease both; }
+
+/* ── Steps ── */
+.steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.stepLine {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  right: 18px;
+  height: 1px;
+  background: var(--border);
+  z-index: 0;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.stepNum {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  transition: all 0.2s;
+}
+
+.stepActive .stepNum {
+  background: var(--yellow);
+  color: var(--bg);
+  border-color: var(--yellow);
+  font-weight: 500;
+}
+
+.stepDone .stepNum {
+  background: var(--success);
+  color: #fff;
+  border-color: var(--success);
+}
+
+.stepLabel {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.stepActive .stepLabel { color: var(--yellow); font-weight: 500; }
+.stepDone   .stepLabel { color: var(--success); }
+
+/* ── Plans grid ── */
+.plansGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.planCard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all 0.18s;
+  position: relative;
+}
+.planCard:hover { border-color: var(--border-hover); }
+.planFeatured   { border-color: var(--yellow-dim); }
+.planSelected   { border-color: var(--yellow) !important; background: var(--yellow-glow); }
+
+.planBadge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--yellow);
+  color: var(--bg);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 12px;
+  border-radius: 99px;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+}
+
+.planLabel {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.planName {
+  font-family: var(--font-display);
+  font-size: 28px;
+  letter-spacing: 2px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.planFeatured .planName { color: var(--yellow); }
+
+.planPrice {
+  font-family: var(--font-mono);
+  font-size: 26px;
+  color: var(--yellow);
+  margin-bottom: 4px;
+}
+
+.planPriceFree {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  color: var(--success);
+}
+
+.planCurrency { font-size: 16px; }
+.planPeriod   { font-size: 13px; color: var(--muted); }
+
+.planFeatures {
+  list-style: none;
+  margin: 0.85rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.featureActive,
+.featureInactive {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.featureActive   { color: var(--text); }
+.featureInactive { color: #3a4050; }
+
+.featureIcon {
+  font-size: 11px;
+  width: 14px;
+  flex-shrink: 0;
+  color: inherit;
+}
+.featureActive .featureIcon { color: var(--success); }
+
+.planCta { width: 100%; }
+
+/* ── Step content ── */
+.stepContent { animation: fadeUp 0.25s ease both; }
+.stepActions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+}
+
+/* ── Form card ── */
+.formCard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+}
+
+.formTitle {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: var(--text);
+  margin-bottom: 1.25rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.formGroup {
+  margin-bottom: 0.85rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Especialidades toggle ── */
+.espGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.espToggle {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 5px 11px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.18s;
+  font-family: var(--font-sans);
+}
+.espToggle:hover { border-color: var(--yellow-dim); color: var(--yellow); }
+.espToggleActive {
+  background: var(--yellow-glow);
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+/* ── Payment ── */
+.paymentSummary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.paymentRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  padding: 4px 0;
+  color: var(--text);
+}
+
+.paymentAmount {
+  font-family: var(--font-mono);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.paymentAmountTotal {
+  font-family: var(--font-mono);
+  color: var(--yellow);
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.mpInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(0, 158, 227, 0.06);
+  border: 1px solid rgba(0, 158, 227, 0.15);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.mpLogo {
+  background: #009ee3;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+
+.mpDisclaimer {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.mpBtn {
+  width: 100%;
+  background: #009ee3;
+  color: #fff;
+  border: none;
+  padding: 0.8rem;
+  font-size: 15px;
+  gap: 10px;
+}
+.mpBtn:hover { background: #0086c4; }
+
+.mpBtnLogo {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+}
+
+/* ── Success screen ── */
+.successScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 1rem;
+  gap: 1rem;
+  animation: fadeUp 0.35s ease both;
+}
+.successIcon  { font-size: 56px; }
+.successTitle { font-family: var(--font-display); font-size: 32px; letter-spacing: 2px; color: var(--yellow); }
+.successDesc  { font-size: 14px; color: var(--muted); max-width: 420px; line-height: 1.7; }
+
+@media (max-width: 768px) {
+  .formCard { padding: 1.25rem; }
+  .plansGrid { gap: 1rem; }
+}
+
+@media (max-width: 580px) {
+  .plansGrid { grid-template-columns: 1fr; }
+  .formRow   { grid-template-columns: 1fr; }
+  .stepLabel { display: none; }
+  .stepActions { flex-direction: column-reverse; }
+  .stepActions .btn { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .successScreen { padding: 2.5rem 0.5rem; }
+  .successTitle  { font-size: clamp(22px, 6vw, 32px); }
+  .mpInfo { flex-direction: column; align-items: flex-start; gap: 8px; }
+}

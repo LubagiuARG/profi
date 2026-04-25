@@ -1,0 +1,73 @@
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  animation: fadeUp 0.35s ease both;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  width: 100%;
+  max-width: 420px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.bolt {
+  font-size: 36px;
+  margin-bottom: .5rem;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  letter-spacing: 2px;
+  color: var(--text);
+  margin-bottom: .35rem;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+}
+
+.error {
+  background: rgba(239,68,68,.1);
+  border: 1px solid rgba(239,68,68,.2);
+  border-radius: var(--radius-md);
+  padding: .6rem .9rem;
+  font-size: 13px;
+  color: #ef4444;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 1.25rem;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.link {
+  color: var(--yellow);
+  text-decoration: none;
+}
+.link:hover { opacity: .8; }

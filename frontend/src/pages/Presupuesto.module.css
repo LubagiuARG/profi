@@ -1,0 +1,532 @@
+.page {
+  animation: fadeUp 0.35s ease both;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+/* ── Hero ─────────────────────────────────────────── */
+
+.hero {
+  text-align: center;
+  padding: 0 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.heroTitle {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.heroDesc {
+  font-size: 0.95rem;
+  color: var(--ink2);
+  max-width: 460px;
+  line-height: 1.65;
+}
+
+/* ── Chat container ───────────────────────────────── */
+
+.chatContainer {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.chatHeader {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chatHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.aiDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s infinite;
+  flex-shrink: 0;
+}
+
+.chatTitle {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ── Mensajes ─────────────────────────────────────── */
+
+.messages {
+  padding: 1.25rem 1rem;
+  min-height: 240px;
+  max-height: 420px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.msgRow {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+}
+
+.msgRowUser { flex-direction: row-reverse; }
+
+.msgBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 82%;
+}
+
+.msgRowUser .msgBody { align-items: flex-end; }
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.avatarAi {
+  background: var(--accent);
+  color: #fff;
+}
+
+.avatarUser {
+  background: #e8e8e4;
+  color: var(--ink2);
+}
+
+.bubble {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px 12px 12px 12px;
+  padding: 0.65rem 0.9rem;
+}
+
+.bubbleUser {
+  background: var(--accent-soft);
+  border-color: rgba(37,99,235,.15);
+  border-radius: 12px 4px 12px 12px;
+}
+
+.bubbleText {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--ink2);
+}
+
+.bubbleText strong { color: var(--ink); font-weight: 600; }
+.bubbleText em     { color: #888; font-style: italic; }
+
+/* ── Budget card ──────────────────────────────────── */
+
+.budgetCard {
+  background: var(--accent-soft);
+  border: 1px solid rgba(37,99,235,.2);
+  border-radius: 10px;
+  padding: 0.85rem;
+  margin-top: 0.6rem;
+}
+
+.budgetHeader {
+  margin-bottom: 0.6rem;
+}
+
+.budgetTitle {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.budgetItems {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.budgetItem {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.82rem;
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(37,99,235,.08);
+}
+
+.budgetItem:last-child { border-bottom: none; }
+
+.budgetLabel { color: var(--ink2); }
+.budgetVal {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.budgetTotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border-top: 2px solid var(--accent);
+  border-radius: 0 0 6px 6px;
+  margin: 0.5rem -0.85rem -0.85rem;
+  padding: 0.5rem 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ink2);
+  letter-spacing: 0.05em;
+}
+
+.budgetTotalVal {
+  font-size: 1rem;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.budgetNotas {
+  font-size: 0.78rem;
+  background: #fffbeb;
+  color: var(--amber);
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  margin-top: 0.6rem;
+  line-height: 1.5;
+}
+
+.budgetDisclaimer {
+  font-size: 0.72rem;
+  color: #aaa;
+  margin-top: 0.35rem;
+  line-height: 1.5;
+}
+
+/* ── Find pro card ────────────────────────────────── */
+
+.findProCard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  padding: 0.7rem 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.findProText {
+  font-size: 0.82rem;
+  color: var(--ink2);
+}
+
+.findProBtn {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: none;
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition);
+}
+
+.findProBtn:hover { background: #dbeafe; }
+
+/* ── Profesionales panel ──────────────────────────── */
+
+.prosPanel {
+  margin: 0 1rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.prosPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.prosPanelTitle {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.prosPanelClose {
+  background: none;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.prosLoading {
+  padding: 1rem;
+  font-size: 0.85rem;
+  color: #888;
+  text-align: center;
+}
+
+/* ── Pro card ─────────────────────────────────────── */
+
+.proCard {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+
+.proCard:last-child { border-bottom: none; }
+
+.proAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.proInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.proNameRow {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.proName {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.proBadge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+}
+
+.proZona {
+  font-size: 0.75rem;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.proRating {
+  font-size: 0.72rem;
+  color: var(--amber);
+}
+
+.waBtn {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: #25d366;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: auto;
+  transition: background var(--transition);
+  white-space: nowrap;
+}
+
+.waBtn:hover { background: #1da851; }
+
+/* ── Typing indicator ─────────────────────────────── */
+
+.typing {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  padding: 2px 0;
+}
+
+.typingDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: bounce 0.75s infinite;
+}
+
+.typingDot:nth-child(2) { animation-delay: 0.15s; }
+.typingDot:nth-child(3) { animation-delay: 0.30s; }
+
+/* ── Sugerencias ──────────────────────────────────── */
+
+.suggestions {
+  border-top: 1px solid var(--border);
+  padding: 0.85rem 1rem;
+}
+
+.suggestionsLabel {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 1px;
+  color: #aaa;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.6rem;
+}
+
+.suggestionsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.suggestionBtn {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  color: var(--ink2);
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition), color var(--transition);
+  white-space: nowrap;
+}
+
+.suggestionBtn:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* ── Input area ───────────────────────────────────── */
+
+.inputArea {
+  border-top: 1px solid var(--border);
+  padding: 0.85rem 1rem;
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-end;
+}
+
+.textarea {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 0.9rem;
+  color: var(--ink);
+  resize: none;
+  outline: none;
+  line-height: 1.5;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
+}
+
+.textarea::placeholder { color: #b0b0b0; }
+.textarea:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.sendBtn {
+  flex-shrink: 0;
+  height: 42px;
+  padding: 0 1.1rem;
+}
+
+.sendBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Responsive ───────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .page { padding: 1.5rem 1rem 2rem; }
+
+  .messages { max-height: 360px; }
+
+  .suggestionsList {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+  .suggestionsList::-webkit-scrollbar { display: none; }
+
+  .findProCard { flex-direction: column; align-items: flex-start; }
+
+  .prosPanel { margin: 0 0.5rem 0.5rem; }
+
+  .proCard { flex-wrap: wrap; }
+  .waBtn   { margin-left: 0; width: 100%; justify-content: center; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .messages { max-height: 300px; padding: 1rem 0.75rem; }
+  .inputArea { padding: 0.65rem 0.75rem; }
+  .suggestions { padding: 0.65rem 0.75rem; }
+}

@@ -1,0 +1,169 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  max-width: 1000px;
+}
+
+.title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #0f0e17;
+  letter-spacing: -0.5px;
+}
+
+.info { color: #888; font-size: 0.9rem; }
+
+.errorMsg {
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  color: #dc2626;
+  font-size: 0.88rem;
+}
+
+/* Stats grid */
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.75rem;
+}
+
+.statCard {
+  background: #ffffff;
+  border: 1px solid #e8e8e4;
+  border-radius: 14px;
+  padding: 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.statTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.statLabel {
+  font-size: 0.78rem;
+  color: #888;
+  font-weight: 400;
+}
+
+.statValue {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1;
+  color: #0f0e17;
+}
+
+.color_blue  .statValue { color: #2563eb; }
+.color_green .statValue { color: #059669; }
+.color_amber .statValue { color: #d97706; }
+.color_gray  .statValue { color: #888; }
+
+/* Badges */
+
+.badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+}
+
+.badge_blue  { background: #eff4ff; color: #2563eb; }
+.badge_green { background: #ecfdf5; color: #059669; }
+.badge_amber { background: #fffbeb; color: #d97706; }
+.badge_gray  { background: #f4f4f0; color: #888; }
+
+/* Section */
+
+.section {
+  background: #ffffff;
+  border: 1px solid #e8e8e4;
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0f0e17;
+  margin-bottom: 1rem;
+  letter-spacing: -0.3px;
+}
+
+/* Table */
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.table th {
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #e8e8e4;
+}
+
+.table td {
+  padding: 0.65rem 0.75rem;
+  color: #0f0e17;
+  border-bottom: 1px solid #f0f0ec;
+}
+
+.table tr:last-child td { border-bottom: none; }
+
+.table tbody tr:hover td { background: #fafaf8; }
+
+.muted { color: #888; }
+
+/* Category stats */
+
+.catStats {
+  display: flex;
+  gap: 2rem;
+}
+
+.catStat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.catNum {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: #0f0e17;
+}
+
+.catLabel {
+  font-size: 0.78rem;
+  color: #888;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+  .statsGrid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 580px) {
+  .statsGrid { grid-template-columns: repeat(2, 1fr); }
+}
