@@ -106,7 +106,7 @@ export default function AdminCategorias() {
                 <div className={styles.formRow}>
                   <div className={styles.field}>
                     <label className={styles.label}>Nombre *</label>
-                    <input className={styles.input} value={form.nombre} onChange={e => handleField('nombre', e.target.value)} required placeholder="Electricista" />
+                    <input className={styles.input} value={form.nombre} onChange={e => handleField('nombre', e.target.value)} required placeholder="Profesional" />
                   </div>
                   <div className={styles.fieldSm}>
                     <label className={styles.label}>Emoji</label>

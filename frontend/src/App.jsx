@@ -5,7 +5,7 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import Presupuesto from './pages/Presupuesto'
-import Electricistas from './pages/Electricistas'
+import Profesionales from './pages/Profesionales'
 import Registro from './pages/Registro'
 import Login from './pages/Login'
 import Panel from './pages/Panel'
@@ -63,7 +63,7 @@ export default function App() {
             <Header />
             <Routes>
               <Route path="/"              element={<Home />} />
-              <Route path="/profesionales" element={<Electricistas />} />
+              <Route path="/profesionales" element={<Profesionales />} />
               <Route path="/presupuesto"   element={<Presupuesto />} />
               <Route path="/registro"      element={<Registro />} />
               <Route path="/login"         element={<Login />} />

@@ -152,10 +152,10 @@ export default function Presupuesto() {
   useEffect(() => {
     if (!mostrarProfesionales) return
     setCargandoProfesionales(true)
-    fetch(`${API}/api/electricistas?limit=6`)
+    fetch(`${API}/api/profesionales?limit=6`)
       .then(r => r.json())
       .then(data => {
-        const lista = Array.isArray(data) ? data : data.electricistas ?? []
+        const lista = Array.isArray(data) ? data : data.profesionales ?? []
         const sorted = [...lista].sort((a, b) => {
           if (a.plan === 'pro' && b.plan !== 'pro') return -1
           if (b.plan === 'pro' && a.plan !== 'pro') return  1

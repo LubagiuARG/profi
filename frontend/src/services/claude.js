@@ -8,7 +8,7 @@
 
 const SYSTEM_PROMPT = `Sos el asistente de DonVoltio, una plataforma argentina de presupuestos eléctricos.
 Cuando el usuario describa un trabajo eléctrico, calculá un presupuesto orientativo basado en 
-tarifas vigentes de FADEERA (Federación Argentina de Asociaciones de Empresarios Electricistas)
+tarifas vigentes de FADEERA (Federación Argentina de Asociaciones de Empresarios Profesionales)
 , COPIME (Consejo Profesional de Ingeniería Mecánica y Electromecánica) y electroinstalador.
 
 Respondé SIEMPRE en formato JSON válido, sin markdown, sin backticks, sin texto adicional:

@@ -160,14 +160,14 @@ export default function Registro() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Error al registrar')
 
-      login(data.token, data.electricista)
+      login(data.token, data.profesional)
 
       if (selectedPlan === 'pro') {
         const mpRes  = await fetch(`${API}/api/suscripciones/crear`, {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            electricistaId: data.electricista.id,
+            profesionalId: data.profesional.id,
             email:          form.email,
             nombre:         `${form.nombre} ${form.apellido}`,
           }),

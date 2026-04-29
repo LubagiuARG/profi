@@ -4,10 +4,10 @@ import BuscadorGeo from '../components/BuscadorGeo'
 import styles from './Home.module.css'
 
 
-const QUICK_TAGS_FALLBACK = ['Electricista', 'Plomero', 'Pintor', 'Gasista', 'Aire acond.', 'Cerrajero']
+const QUICK_TAGS_FALLBACK = ['Profesional', 'Plomero', 'Pintor', 'Gasista', 'Aire acond.', 'Cerrajero']
 
 const CATEGORIAS_FALLBACK = [
-  { emoji: '⚡', nombre: 'Electricista' },
+  { emoji: '⚡', nombre: 'Profesional' },
   { emoji: '🔧', nombre: 'Plomero' },
   { emoji: '🔥', nombre: 'Gasista' },
   { emoji: '🧱', nombre: 'Albañil' },
@@ -33,7 +33,7 @@ const STATS = [
 ]
 
 const FEATURED = [
-  { name: 'Carlos M.', role: 'Electricista matriculado', location: 'Buenos Aires', rating: 4.9, jobs: 312, avatar: '👷' },
+  { name: 'Carlos M.', role: 'Profesional matriculado', location: 'Buenos Aires', rating: 4.9, jobs: 312, avatar: '👷' },
   { name: 'Laura G.', role: 'Plomera profesional', location: 'Córdoba', rating: 4.8, jobs: 187, avatar: '🔧' },
   { name: 'Pablo R.', role: 'Gasista habilitado', location: 'Rosario', rating: 5.0, jobs: 94, avatar: '🔥' },
 ]

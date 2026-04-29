@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
-import styles from './Electricistas.module.css'
-import { getElectricistas } from '../services/api'
+import styles from './Profesionales.module.css'
+import { getProfesionales } from '../services/api'
 
 const REGIONS = [
   { id: 'todos',     label: 'Todos'     },
@@ -80,24 +80,24 @@ function ElecCard({ elec }) {
   )
 }
 
-export default function Electricistas() {
-  const [electricistas, setElectricistas] = useState([])
+export default function Profesionales() {
+  const [profesionales, setProfesionales] = useState([])
   const [cargando, setCargando]           = useState(true)
   const [region, setRegion]               = useState('todos')
   const [sort, setSort]                   = useState('rating')
   const [search, setSearch]               = useState('')
 
   useEffect(() => {
-    getElectricistas()
+    getProfesionales()
       .then(data => {
-        setElectricistas(data)
+        setProfesionales(data)
         setCargando(false)
       })
       .catch(() => setCargando(false))
   }, [])
 
   const filtered = useMemo(() => {
-    let list = electricistas
+    let list = profesionales
 
     if (region !== 'todos') {
       list = list.filter(e =>
@@ -120,13 +120,13 @@ export default function Electricistas() {
       if (sort === 'reviews') return (b.reviews || 0) - (a.reviews || 0)
       return 0
     })
-  }, [electricistas, region, sort, search])
+  }, [profesionales, region, sort, search])
 
   return (
     <div className={styles.page}>
 
       <div className="section-head">
-        <h1 className="display">Electricistas Verificados</h1>
+        <h1 className="display">Profesionales Verificados</h1>
         <p>Profesionales matriculados · GBA y CABA</p>
       </div>
 
@@ -162,15 +162,15 @@ export default function Electricistas() {
       {cargando ? (
         <div className={styles.empty}>
           <span>⚡</span>
-          <p>Cargando electricistas...</p>
+          <p>Cargando profesionales...</p>
         </div>
       ) : filtered.length === 0 ? (
         <div className={styles.empty}>
           <span>🔍</span>
           <p>
-            {electricistas.length === 0
-              ? 'Todavía no hay electricistas registrados.'
-              : 'No hay electricistas que coincidan con tu búsqueda.'}
+            {profesionales.length === 0
+              ? 'Todavía no hay profesionales registrados.'
+              : 'No hay profesionales que coincidan con tu búsqueda.'}
           </p>
         </div>
       ) : (
@@ -186,7 +186,7 @@ export default function Electricistas() {
 
       <div className={styles.ctaBanner}>
         <div>
-          <strong>¿Sos electricista?</strong>
+          <strong>¿Sos profesional?</strong>
           <span> Publicá tus servicios y recibí consultas de clientes en tu zona.</span>
         </div>
         <a href="/registro" className="btn btn-primary">Registrarse →</a>

@@ -24,7 +24,7 @@ export default function Login() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Error al iniciar sesión')
-      login(data.token, data.electricista)
+      login(data.token, data.profesional)
       navigate('/panel')
     } catch (err) {
       setError(err.message)
