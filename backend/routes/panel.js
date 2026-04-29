@@ -11,15 +11,15 @@ router.use(authMiddleware)
 // GET /api/panel/stats — Estadísticas del perfil
 router.get('/stats', async (req, res) => {
   try {
-    const electricista = await prisma.electricista.findUnique({
-      where: { id: req.electricistaId },
+    const profesional = await prisma.profesional.findUnique({
+      where: { id: req.profesionalId },
       select: {
         visitas: true, rating: true, reviews: true,
         plan: true, verificado: true, vacaciones: true,
         creadoEn: true,
       },
     })
-    return res.json(electricista)
+    return res.json(profesional)
   } catch (error) {
     return res.status(500).json({ error: 'Error al obtener estadísticas' })
   }
@@ -33,8 +33,8 @@ router.patch('/perfil', async (req, res) => {
       provincia, zona, descripcion, especialidades,
     } = req.body
 
-    const actualizado = await prisma.electricista.update({
-      where: { id: req.electricistaId },
+    const actualizado = await prisma.profesional.update({
+      where: { id: req.profesionalId },
       data: {
         ...(nombre         && { nombre }),
         ...(apellido       && { apellido }),
@@ -47,7 +47,7 @@ router.patch('/perfil', async (req, res) => {
       },
     })
 
-    return res.json({ ok: true, electricista: actualizado })
+    return res.json({ ok: true, profesional: actualizado })
   } catch (error) {
     return res.status(500).json({ error: 'Error al actualizar perfil' })
   }
@@ -57,8 +57,8 @@ router.patch('/perfil', async (req, res) => {
 router.patch('/vacaciones', async (req, res) => {
   try {
     const { vacaciones } = req.body
-    await prisma.electricista.update({
-      where: { id: req.electricistaId },
+    await prisma.profesional.update({
+      where: { id: req.profesionalId },
       data:  { vacaciones },
     })
     return res.json({ ok: true, vacaciones })
@@ -70,8 +70,8 @@ router.patch('/vacaciones', async (req, res) => {
 // DELETE /api/panel/cuenta — Darse de baja
 router.delete('/cuenta', async (req, res) => {
   try {
-    await prisma.electricista.update({
-      where: { id: req.electricistaId },
+    await prisma.profesional.update({
+      where: { id: req.profesionalId },
       data:  { activo: false },
     })
     return res.json({ ok: true, mensaje: 'Cuenta desactivada correctamente' })

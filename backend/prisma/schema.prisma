@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Electricista {
+model Profesional {
   id             Int      @id @default(autoincrement())
   nombre         String
   apellido       String
@@ -49,7 +49,7 @@ model Categoria {
   orden       Int      @default(0)
   creadoEn    DateTime @default(now())
 
-  profesionales Electricista[]
+  profesionales Profesional[]
 }
 
 model Admin {
@@ -64,22 +64,22 @@ model Admin {
 }
 model Pago {
   id             Int      @id @default(autoincrement())
-  electricistaId Int
+  profesionalId Int
   monto          Float
   estado         String   @default("pendiente")
   mpPaymentId    String?
   creadoEn       DateTime @default(now())
 
-  electricista Electricista @relation(fields: [electricistaId], references: [id])
+  profesional Profesional @relation(fields: [profesionalId], references: [id])
 }
 
 model Resena {
   id             Int      @id @default(autoincrement())
-  electricistaId Int
+  profesionalId Int
   autor          String
   rating         Int
   comentario     String?
   creadoEn       DateTime @default(now())
 
-  electricista Electricista @relation(fields: [electricistaId], references: [id])
+  profesional Profesional @relation(fields: [profesionalId], references: [id])
 }

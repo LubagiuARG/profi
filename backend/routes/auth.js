@@ -19,14 +19,14 @@ router.post('/registro', async (req, res) => {
       return res.status(400).json({ error: 'Faltan campos obligatorios' })
     }
 
-    const existe = await prisma.electricista.findUnique({ where: { email } })
+    const existe = await prisma.profesional.findUnique({ where: { email } })
     if (existe) {
       return res.status(409).json({ error: 'Ya existe un profesional con ese email' })
     }
 
     const hash = await bcrypt.hash(password, 10)
 
-    const electricista = await prisma.electricista.create({
+    const profesional = await prisma.profesional.create({
       data: {
         nombre, apellido, email,
         password:       hash,
@@ -40,17 +40,17 @@ router.post('/registro', async (req, res) => {
       },
     })
 
-    const token = generarToken(electricista.id)
+    const token = generarToken(profesional.id)
 
     return res.status(201).json({
       ok: true,
       token,
-      electricista: {
-        id:       electricista.id,
-        nombre:   electricista.nombre,
-        apellido: electricista.apellido,
-        email:    electricista.email,
-        plan:     electricista.plan,
+      profesional: {
+        id:       profesional.id,
+        nombre:   profesional.nombre,
+        apellido: profesional.apellido,
+        email:    profesional.email,
+        plan:     profesional.plan,
       },
     })
   } catch (error) {
@@ -68,29 +68,29 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Email y contraseña requeridos' })
     }
 
-    const electricista = await prisma.electricista.findUnique({ where: { email } })
-    if (!electricista || !electricista.password) {
+    const profesional = await prisma.profesional.findUnique({ where: { email } })
+    if (!profesional || !profesional.password) {
       return res.status(401).json({ error: 'Email o contraseña incorrectos' })
     }
 
-    const valido = await bcrypt.compare(password, electricista.password)
+    const valido = await bcrypt.compare(password, profesional.password)
     if (!valido) {
       return res.status(401).json({ error: 'Email o contraseña incorrectos' })
     }
 
-    const token = generarToken(electricista.id)
+    const token = generarToken(profesional.id)
 
     return res.json({
       ok: true,
       token,
-      electricista: {
-        id:        electricista.id,
-        nombre:    electricista.nombre,
-        apellido:  electricista.apellido,
-        email:     electricista.email,
-        plan:      electricista.plan,
-        vacaciones:electricista.vacaciones,
-        verificado:electricista.verificado,
+      profesional: {
+        id:        profesional.id,
+        nombre:    profesional.nombre,
+        apellido:  profesional.apellido,
+        email:     profesional.email,
+        plan:      profesional.plan,
+        vacaciones:profesional.vacaciones,
+        verificado:profesional.verificado,
       },
     })
   } catch (error) {
@@ -111,7 +111,7 @@ router.get('/me', async (req, res) => {
       header.split(' ')[1],
       process.env.JWT_SECRET || 'electro-ar-secret-key'
     )
-    const electricista = await prisma.electricista.findUnique({
+    const profesional = await prisma.profesional.findUnique({
       where: { id: payload.id },
       select: {
         id: true, nombre: true, apellido: true, email: true,
@@ -122,8 +122,8 @@ router.get('/me', async (req, res) => {
         creadoEn: true,
       },
     })
-    if (!electricista) return res.status(404).json({ error: 'No encontrado' })
-    return res.json(electricista)
+    if (!profesional) return res.status(404).json({ error: 'No encontrado' })
+    return res.json(profesional)
   } catch {
     return res.status(401).json({ error: 'Token inválido' })
   }

@@ -37,7 +37,7 @@ function buildSystemPrompt(textoPrecios, userType, fechaActualizacion) {
 
   const instruccionesProfesional = esProfesional ? `
 MODO PROFESIONAL ACTIVO:
-- El usuario ES el electricista que va a realizar el trabajo
+- El usuario ES el profesional que va a realizar el trabajo
 - Generá un presupuesto más detallado y profesional
 - Incluí tiempo estimado de trabajo en horas
 - Separar claramente: mano de obra, materiales, y subtotales
@@ -51,7 +51,7 @@ MODO CLIENTE ACTIVO:
 - Explicá brevemente en qué consiste el trabajo
 `
 
-  return `Sos el asistente de ElectroAR, plataforma argentina de presupuestos eléctricos.
+  return `Sos el asistente de Tu Profesional, plataforma argentina de presupuestos.
 Tu rol es calcular presupuestos de mano de obra orientativos usando la tabla de precios actualizada.
 
 TIPO DE USUARIO: ${userType}

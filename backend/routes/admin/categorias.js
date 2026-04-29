@@ -88,7 +88,7 @@ router.delete('/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id)
 
-    const count = await prisma.electricista.count({ where: { categoriaId: id } })
+    const count = await prisma.profesional.count({ where: { categoriaId: id } })
     if (count > 0) {
       return res.status(409).json({ error: `No se puede eliminar: tiene ${count} profesional(es) asignado(s)` })
     }

@@ -14,27 +14,27 @@ const client  = new MercadoPagoConfig({
 })
 
 const PLAN_MONTO  = 20000
-const PLAN_NOMBRE = 'ElectroAR — Plan PRO'
+const PLAN_NOMBRE = 'Tu profesional — Plan PRO'
 const BACK_URL    = process.env.FRONTEND_URL || 'http://localhost:5173'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // POST /api/suscripciones/crear
-// Crea una suscripción para un electricista y retorna la URL de pago de MP
+// Crea una suscripción para un profesional y retorna la URL de pago de MP
 // ─────────────────────────────────────────────────────────────────────────────
 router.post('/crear', async (req, res) => {
   try {
-    const { electricistaId, email, nombre } = req.body
+    const { profesionalId, email, nombre } = req.body
 
-    if (!electricistaId || !email || !nombre) {
-      return res.status(400).json({ error: 'Faltan datos del electricista' })
+    if (!profesionalId || !email || !nombre) {
+      return res.status(400).json({ error: 'Faltan datos del profesional' })
     }
 
-    // Verificar que el electricista existe
-    const electricista = await prisma.electricista.findUnique({
-      where: { id: parseInt(electricistaId) },
+    // Verificar que el profesional existe
+    const profesional = await prisma.profesional.findUnique({
+      where: { id: parseInt(profesionalId) },
     })
-    if (!electricista) {
-      return res.status(404).json({ error: 'Electricista no encontrado' })
+    if (!profesional) {
+      return res.status(404).json({ error: 'Profesional no encontrado' })
     }
 
     // Crear suscripción en MercadoPago
@@ -50,13 +50,13 @@ router.post('/crear', async (req, res) => {
           transaction_amount: PLAN_MONTO,
           currency_id:    'ARS',
         },
-        external_reference: String(electricistaId),
+        external_reference: String(profesionalId),
       },
     })
 
     return res.json({
       ok:       true,
-      init_point: suscripcion.init_point, // URL donde el electricista paga
+      init_point: suscripcion.init_point, // URL donde el profesional paga
       id:       suscripcion.id,
     })
 
@@ -80,35 +80,35 @@ router.post('/webhook', async (req, res) => {
       const preApproval  = new PreApproval(client)
       const suscripcion  = await preApproval.get({ id: data.id })
 
-      const electricistaId = parseInt(suscripcion.external_reference)
+      const profesionalId = parseInt(suscripcion.external_reference)
       const estado         = suscripcion.status // 'authorized', 'paused', 'cancelled'
 
       if (estado === 'authorized') {
         // Activar Plan PRO
-        await prisma.electricista.update({
-          where: { id: electricistaId },
+        await prisma.profesional.update({
+          where: { id: profesionalId },
           data:  { plan: 'pro', verificado: true },
         })
 
         // Registrar pago
         await prisma.pago.create({
           data: {
-            electricistaId,
+            profesionalId,
             monto:       PLAN_MONTO,
             estado:      'aprobado',
             mpPaymentId: data.id,
           },
         })
 
-        console.log(`[Webhook MP] ✅ Plan PRO activado para electricista ${electricistaId}`)
+        console.log(`[Webhook MP] ✅ Plan PRO activado para profesional ${profesionalId}`)
 
       } else if (estado === 'cancelled') {
         // Bajar a plan free si cancela
-        await prisma.electricista.update({
-          where: { id: electricistaId },
+        await prisma.profesional.update({
+          where: { id: profesionalId },
           data:  { plan: 'free', verificado: false },
         })
-        console.log(`[Webhook MP] ⚠️ Suscripción cancelada para electricista ${electricistaId}`)
+        console.log(`[Webhook MP] ⚠️ Suscripción cancelada para profesional ${profesionalId}`)
       }
     }
 
@@ -121,17 +121,17 @@ router.post('/webhook', async (req, res) => {
 })
 
 // ─────────────────────────────────────────────────────────────────────────────
-// GET /api/suscripciones/estado/:electricistaId
-// Ver el estado actual del plan de un electricista
+// GET /api/suscripciones/estado/:profesionalId
+// Ver el estado actual del plan de un profesional
 // ─────────────────────────────────────────────────────────────────────────────
-router.get('/estado/:electricistaId', async (req, res) => {
+router.get('/estado/:profesionalId', async (req, res) => {
   try {
-    const electricista = await prisma.electricista.findUnique({
-      where: { id: parseInt(req.params.electricistaId) },
+    const profesional = await prisma.profesional.findUnique({
+      where: { id: parseInt(req.params.profesionalId) },
       select: { plan: true, verificado: true },
     })
-    if (!electricista) return res.status(404).json({ error: 'No encontrado' })
-    return res.json(electricista)
+    if (!profesional) return res.status(404).json({ error: 'No encontrado' })
+    return res.json(profesional)
   } catch (error) {
     return res.status(500).json({ error: 'Error al obtener estado' })
   }

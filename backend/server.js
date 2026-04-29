@@ -16,7 +16,7 @@ import cron from 'node-cron'
 
 import chatRouter            from './routes/chat.js'
 import preciosRouter          from './routes/precios.js'
-import electricistasRouter    from './routes/electricistas.js'
+import profesionalesRouter    from './routes/profesionales.js'
 import suscripcionesRouter    from './routes/suscripciones.js'
 import authRouter             from './routes/auth.js'
 import panelRouter            from './routes/panel.js'
@@ -64,7 +64,7 @@ app.use(apiLimiter)
 // ─────────────────────────────────────────────────────────────────────────────
 app.use('/api/chat',    chatLimiter, chatRouter)
 app.use('/api/precios', preciosRouter)
-app.use('/api/electricistas', electricistasRouter)
+app.use('/api/profesionales', profesionalesRouter)
 app.use('/api/suscripciones', suscripcionesRouter)
 app.use('/api/auth',  authRouter)
 app.use('/api/panel', panelRouter)

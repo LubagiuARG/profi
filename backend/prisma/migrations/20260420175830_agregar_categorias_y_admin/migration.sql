@@ -1,5 +1,5 @@
 -- AlterTable
-ALTER TABLE "Electricista" ADD COLUMN     "categoriaId" INTEGER;
+ALTER TABLE "Profesional" ADD COLUMN     "categoriaId" INTEGER;
 
 -- CreateTable
 CREATE TABLE "Categoria" (
@@ -36,4 +36,4 @@ CREATE UNIQUE INDEX "Categoria_slug_key" ON "Categoria"("slug");
 CREATE UNIQUE INDEX "Admin_email_key" ON "Admin"("email");
 
 -- AddForeignKey
-ALTER TABLE "Electricista" ADD CONSTRAINT "Electricista_categoriaId_fkey" FOREIGN KEY ("categoriaId") REFERENCES "Categoria"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Profesional" ADD CONSTRAINT "Profesional_categoriaId_fkey" FOREIGN KEY ("categoriaId") REFERENCES "Categoria"("id") ON DELETE SET NULL ON UPDATE CASCADE;

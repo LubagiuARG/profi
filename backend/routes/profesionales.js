@@ -1,6 +1,6 @@
 /**
- * ElectroAR — Ruta /api/electricistas
- * CRUD de electricistas con Prisma + PostgreSQL
+ * ElectroAR — Ruta /api/profesionales
+ * CRUD de profesionales con Prisma + PostgreSQL
  */
 
 import { Router } from 'express'
@@ -9,7 +9,7 @@ import { PrismaClient } from '@prisma/client'
 const router = Router()
 const prisma = new PrismaClient()
 
-// GET /api/electricistas — Listar todos los activos
+// GET /api/profesionales — Listar todos los activos
 router.get('/', async (req, res) => {
   try {
     const { zona, plan, search } = req.query
@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
       ]
     }
 
-    const electricistas = await prisma.electricista.findMany({
+    const profesionales = await prisma.profesional.findMany({
       where,
       orderBy: [
         { plan: 'desc' },    // PRO primero
@@ -58,27 +58,27 @@ router.get('/', async (req, res) => {
       },
     })
 
-    return res.json(electricistas)
+    return res.json(profesionales)
   } catch (error) {
-    console.error('[Electricistas] Error al listar:', error.message)
-    return res.status(500).json({ error: 'Error al obtener electricistas' })
+    console.error('[Profesionales] Error al listar:', error.message)
+    return res.status(500).json({ error: 'Error al obtener profesionales' })
   }
 })
 
-// GET /api/electricistas/:id — Ver uno
+// GET /api/profesionales/:id — Ver uno
 router.get('/:id', async (req, res) => {
   try {
-    const electricista = await prisma.electricista.findUnique({
+    const profesional = await prisma.profesional.findUnique({
       where: { id: parseInt(req.params.id) },
     })
-    if (!electricista) return res.status(404).json({ error: 'No encontrado' })
-    return res.json(electricista)
+    if (!profesional) return res.status(404).json({ error: 'No encontrado' })
+    return res.json(profesional)
   } catch (error) {
-    return res.status(500).json({ error: 'Error al obtener electricista' })
+    return res.status(500).json({ error: 'Error al obtener profesional' })
   }
 })
 
-// POST /api/electricistas — Registrar nuevo
+// POST /api/profesionales — Registrar nuevo
 router.post('/', async (req, res) => {
   try {
     const {
@@ -94,12 +94,12 @@ router.post('/', async (req, res) => {
     }
 
     // Verificar que el email no exista
-    const existe = await prisma.electricista.findUnique({ where: { email } })
+    const existe = await prisma.profesional.findUnique({ where: { email } })
     if (existe) {
-      return res.status(409).json({ error: 'Ya existe un electricista con ese email' })
+      return res.status(409).json({ error: 'Ya existe un profesional con ese email' })
     }
 
-    const electricista = await prisma.electricista.create({
+    const profesional = await prisma.profesional.create({
       data: {
         nombre,
         apellido,
@@ -119,21 +119,21 @@ router.post('/', async (req, res) => {
 
     return res.status(201).json({
       ok: true,
-      mensaje: 'Electricista registrado correctamente',
-      id: electricista.id,
+      mensaje: 'Profesional registrado correctamente',
+      id: profesional.id,
     })
   } catch (error) {
-    console.error('[Electricistas] Error al registrar:', error.message)
-    return res.status(500).json({ error: 'Error al registrar electricista' })
+    console.error('[Profesionales] Error al registrar:', error.message)
+    return res.status(500).json({ error: 'Error al registrar profesional' })
   }
 })
 
-// PATCH /api/electricistas/:id/plan — Actualizar plan (lo llama MercadoPago webhook)
+// PATCH /api/profesionales/:id/plan — Actualizar plan (lo llama MercadoPago webhook)
 router.patch('/:id/plan', async (req, res) => {
   try {
     const { plan, mpPaymentId } = req.body
 
-    const electricista = await prisma.electricista.update({
+    const profesional = await prisma.profesional.update({
       where: { id: parseInt(req.params.id) },
       data:  { plan, verificado: plan === 'pro' },
     })
@@ -142,7 +142,7 @@ router.patch('/:id/plan', async (req, res) => {
     if (mpPaymentId) {
       await prisma.pago.create({
         data: {
-          electricistaId: electricista.id,
+          profesionalId: profesional.id,
           monto:          8900,
           estado:         'aprobado',
           mpPaymentId,
@@ -150,7 +150,7 @@ router.patch('/:id/plan', async (req, res) => {
       })
     }
 
-    return res.json({ ok: true, plan: electricista.plan })
+    return res.json({ ok: true, plan: profesional.plan })
   } catch (error) {
     return res.status(500).json({ error: 'Error al actualizar plan' })
   }

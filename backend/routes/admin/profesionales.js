@@ -11,9 +11,9 @@ router.use(adminAuthMiddleware)
 router.get('/stats', async (req, res) => {
   try {
     const [total, porPlan, porCategoria] = await Promise.all([
-      prisma.electricista.count(),
-      prisma.electricista.groupBy({ by: ['plan'], _count: { id: true } }),
-      prisma.electricista.groupBy({ by: ['categoriaId'], _count: { id: true } }),
+      prisma.profesional.count(),
+      prisma.profesional.groupBy({ by: ['plan'], _count: { id: true } }),
+      prisma.profesional.groupBy({ by: ['categoriaId'], _count: { id: true } }),
     ])
 
     const categorias = await prisma.categoria.findMany({ select: { id: true, nombre: true, slug: true } })
@@ -58,7 +58,7 @@ router.get('/', async (req, res) => {
     }
 
     const [profesionales, total] = await Promise.all([
-      prisma.electricista.findMany({
+      prisma.profesional.findMany({
         where,
         skip,
         take: limit,
@@ -73,7 +73,7 @@ router.get('/', async (req, res) => {
           categoria: { select: { nombre: true, slug: true, emoji: true } },
         },
       }),
-      prisma.electricista.count({ where }),
+      prisma.profesional.count({ where }),
     ])
 
     return res.json({
@@ -92,7 +92,7 @@ router.patch('/:id', async (req, res) => {
     const id = parseInt(req.params.id)
     const { activo, verificado, plan, categoriaId, localidad, localidadId, radioKm } = req.body
 
-    const profesional = await prisma.electricista.update({
+    const profesional = await prisma.profesional.update({
       where: { id },
       data: {
         ...(activo      !== undefined && { activo }),

@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "Electricista" (
+CREATE TABLE "Profesional" (
     "id" SERIAL NOT NULL,
     "nombre" TEXT NOT NULL,
     "apellido" TEXT NOT NULL,
@@ -18,13 +18,13 @@ CREATE TABLE "Electricista" (
     "creadoEn" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "actualizadoEn" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Electricista_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Profesional_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Pago" (
     "id" SERIAL NOT NULL,
-    "electricistaId" INTEGER NOT NULL,
+    "profesionalId" INTEGER NOT NULL,
     "monto" DOUBLE PRECISION NOT NULL,
     "estado" TEXT NOT NULL DEFAULT 'pendiente',
     "mpPaymentId" TEXT,
@@ -36,7 +36,7 @@ CREATE TABLE "Pago" (
 -- CreateTable
 CREATE TABLE "Resena" (
     "id" SERIAL NOT NULL,
-    "electricistaId" INTEGER NOT NULL,
+    "profesionalId" INTEGER NOT NULL,
     "autor" TEXT NOT NULL,
     "rating" INTEGER NOT NULL,
     "comentario" TEXT,
@@ -46,10 +46,10 @@ CREATE TABLE "Resena" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Electricista_email_key" ON "Electricista"("email");
+CREATE UNIQUE INDEX "Profesional_email_key" ON "Profesional"("email");
 
 -- AddForeignKey
-ALTER TABLE "Pago" ADD CONSTRAINT "Pago_electricistaId_fkey" FOREIGN KEY ("electricistaId") REFERENCES "Electricista"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Pago" ADD CONSTRAINT "Pago_profesionalId_fkey" FOREIGN KEY ("profesionalId") REFERENCES "Profesional"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Resena" ADD CONSTRAINT "Resena_electricistaId_fkey" FOREIGN KEY ("electricistaId") REFERENCES "Electricista"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Resena" ADD CONSTRAINT "Resena_profesionalId_fkey" FOREIGN KEY ("profesionalId") REFERENCES "Profesional"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

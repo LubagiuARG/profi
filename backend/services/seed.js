@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs'
 const prisma = new PrismaClient()
 
 const categorias = [
-  { nombre: 'Electricista',         slug: 'electricista',        emoji: '⚡', orden: 1 },
+  { nombre: 'Profesional',         slug: 'profesional',        emoji: '⚡', orden: 1 },
   { nombre: 'Plomero',              slug: 'plomero',             emoji: '🔧', orden: 2 },
   { nombre: 'Gasista',              slug: 'gasista',             emoji: '🔥', orden: 3 },
   { nombre: 'Albañil',              slug: 'albanil',             emoji: '🧱', orden: 4 },
