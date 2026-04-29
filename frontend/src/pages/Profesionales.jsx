@@ -127,7 +127,7 @@ export default function Profesionales() {
 
       <div className="section-head">
         <h1 className="display">Profesionales Verificados</h1>
-        <p>Profesionales matriculados · GBA y CABA</p>
+        <p>Profesionales matriculados · Argentina</p>
       </div>
 
       <div className={styles.controls}>
