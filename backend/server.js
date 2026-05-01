@@ -42,8 +42,9 @@ app.use(helmet())
 const originesPermitidos = [
   'http://localhost:5173',
   'http://localhost:4173',
-  'https://electro-ar-frontend.vercel.app',
-  'https://electro-ar-frontend-git-main-lubagiuargs-projects.vercel.app',
+  'https://electro-ar-frontend-lubagiuargs-projects.vercel.app/',
+  'https://electro-ar-frontend-git-main-lubagiuargs-projects.vercel.app/',
+  'https://electro-ar-frontend-53joeuhcz-lubagiuargs-projects.vercel.app/',
   process.env.FRONTEND_URL,
 ].filter(Boolean)
 
