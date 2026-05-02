@@ -54,7 +54,7 @@ app.use(cors({
     if (originesPermitidos.includes(origin)) return callback(null, true)
     callback(new Error(`CORS bloqueado para: ${origin}`))
   },
-  methods: ['GET', 'POST', 'PATCH'],
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'x-admin-token', 'Authorization'],
 }))
 app.use(express.json({ limit: '1mb' }))
