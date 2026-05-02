@@ -44,5 +44,5 @@ export const actualizarProfesional = (token, id, datos) => api('PUT', `/api/admi
 
 export const getAdmins        = (token)           => api('GET',    '/api/admin/admins',             token)
 export const crearAdmin       = (token, datos)    => api('POST',   '/api/admin/admins',             token, datos)
-export const actualizarAdmin      = (token, id, datos) => api('PUT',   `/api/admin/admins/${id}`, token, datos)
+export const actualizarAdmin      = (token, id, datos) => api('PATCH',   `/api/admin/admins/${id}`, token, datos)
 export const cambiarPasswordAdmin = (token, id, datos) => api('PATCH', `/api/admin/admins/${id}`, token, datos)
