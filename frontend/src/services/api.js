@@ -43,8 +43,8 @@ export async function registrarProfesional(datos) {
 
 // ── Lead matching (cliente) ────────────────────────────────────
 
-export async function enviarOtpCliente(telefono) {
-  return postJson('/api/clientes/otp/enviar', { telefono })
+export async function enviarOtpCliente(telefono, email) {
+  return postJson('/api/clientes/otp/enviar', { telefono, email })
 }
 
 export async function verificarOtpCliente(telefono, codigo) {

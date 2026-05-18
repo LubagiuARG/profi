@@ -9,7 +9,7 @@ const PASSWORD_COMUN = 'profesional123'
 const profesionales = [
   {
     nombre: 'Juan', apellido: 'Pérez',
-    email: 'juan.electricista@profi.dev',
+    email: 'juan-electricista@mailinator.com',
     telefono: '+541112345001',
     matricula: 'CABA-EL-1234',
     provincia: 'CABA', zona: 'Caballito',
@@ -24,7 +24,7 @@ const profesionales = [
   },
   {
     nombre: 'María', apellido: 'González',
-    email: 'maria.plomera@profi.dev',
+    email: 'maria-plomera@mailinator.com',
     telefono: '+541112345002',
     provincia: 'Buenos Aires', zona: 'Vicente López',
     localidad: 'Vicente López',
@@ -38,7 +38,7 @@ const profesionales = [
   },
   {
     nombre: 'Carlos', apellido: 'Rodríguez',
-    email: 'carlos.gasista@profi.dev',
+    email: 'carlos-gasista@mailinator.com',
     telefono: '+541112345003',
     matricula: 'ENARGAS-456789',
     provincia: 'CABA', zona: 'Belgrano',
@@ -53,7 +53,7 @@ const profesionales = [
   },
   {
     nombre: 'Lucía', apellido: 'Fernández',
-    email: 'lucia.pintora@profi.dev',
+    email: 'lucia-pintora@mailinator.com',
     telefono: '+541112345004',
     provincia: 'Buenos Aires', zona: 'Quilmes',
     localidad: 'Quilmes',
@@ -67,7 +67,7 @@ const profesionales = [
   },
   {
     nombre: 'Diego', apellido: 'Martínez',
-    email: 'diego.albanil@profi.dev',
+    email: 'diego-albanil@mailinator.com',
     telefono: '+541112345005',
     provincia: 'CABA', zona: 'Flores',
     localidad: 'Flores',

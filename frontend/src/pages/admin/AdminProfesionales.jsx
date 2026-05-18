@@ -104,7 +104,7 @@ export default function AdminProfesionales() {
                     <tr key={pro.id}>
                       <td className={styles.bold}>{pro.nombre}</td>
                       <td className={styles.muted}>{pro.email}</td>
-                      <td>{pro.categoria || '—'}</td>
+                      <td>{pro.categoria ? `${pro.categoria.emoji || ''} ${pro.categoria.nombre}`.trim() : '—'}</td>
                       <td><PlanBadge plan={pro.plan} /></td>
                       <td><EstadoBadge pro={pro} /></td>
                       <td className={styles.muted}>{formatDate(pro.createdAt)}</td>

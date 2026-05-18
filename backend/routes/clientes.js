@@ -11,10 +11,10 @@ const router = Router()
 // POST /api/clientes/otp/enviar
 router.post('/otp/enviar', async (req, res) => {
   try {
-    const { telefono } = req.body
+    const { telefono, email } = req.body
     if (!telefono) return res.status(400).json({ error: 'Teléfono requerido' })
 
-    const result = await enviarOtp(telefono)
+    const result = await enviarOtp(telefono, email)
     return res.json(result)
   } catch (error) {
     const status = error.code === 'COOLDOWN' ? 429 : 400

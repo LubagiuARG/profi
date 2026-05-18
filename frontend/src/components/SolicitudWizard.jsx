@@ -46,7 +46,7 @@ export default function SolicitudWizard({
     }
     setCargando(true)
     try {
-      await enviarOtpCliente(datos.telefono)
+      await enviarOtpCliente(datos.telefono, datos.email || undefined)
       setPaso(2)
     } catch (err) {
       setError(err.message)
@@ -77,7 +77,7 @@ export default function SolicitudWizard({
     setError('')
     setCargando(true)
     try {
-      await enviarOtpCliente(datos.telefono)
+      await enviarOtpCliente(datos.telefono, datos.email || undefined)
       setCodigo('')
     } catch (err) {
       setError(err.message)
@@ -203,11 +203,12 @@ export default function SolicitudWizard({
         {!exito && paso === 2 && (
           <div className={styles.contenido}>
             <p className={styles.parrafo}>
-              Te enviamos un código de 6 dígitos a <strong>{datos.telefono}</strong>.
+              Te enviamos un código de 6 dígitos a <strong>{datos.telefono}</strong>
+              {datos.email && <> y a <strong>{datos.email}</strong></>}.
             </p>
             {!import.meta.env.PROD && (
               <p className={styles.hintDev}>
-                💡 <strong>Modo dev:</strong> el código aparece en la consola del backend (línea <code>[OTP DEV]</code>).
+                💡 <strong>Modo dev:</strong> el código siempre es <code>000000</code>.
               </p>
             )}
             <label className={styles.label}>

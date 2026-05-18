@@ -13,6 +13,7 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { PrismaClient } from '@prisma/client'
+import { enviarEmail } from './email.js'
 
 const prisma = new PrismaClient()
 
@@ -21,7 +22,12 @@ const OTP_COOLDOWN_SEG     = 60
 const OTP_MAX_INTENTOS     = 5
 const TOKEN_CLIENTE_TTL    = '30m'
 
+// En dev usamos un código fijo para no tener que mirar la consola en cada test.
+// En prod (NODE_ENV === 'production') el código es aleatorio de 6 dígitos.
+const OTP_DEV_CODE = '000000'
+
 function generarCodigo() {
+  if (process.env.NODE_ENV !== 'production') return OTP_DEV_CODE
   return String(Math.floor(100000 + Math.random() * 900000))
 }
 
@@ -30,7 +36,7 @@ function normalizarTelefono(tel) {
   return String(tel || '').replace(/[^\d+]/g, '')
 }
 
-export async function enviarOtp(telefonoRaw) {
+export async function enviarOtp(telefonoRaw, email) {
   const telefono = normalizarTelefono(telefonoRaw)
   if (!telefono || telefono.length < 8) {
     throw new Error('Teléfono inválido')
@@ -60,15 +66,20 @@ export async function enviarOtp(telefonoRaw) {
     data: { telefono, codigoHash, expiraEn },
   })
 
-  // Envío real: en dev se loguea. En prod conectar Twilio/WA Cloud aquí.
+  // Canal 1: WhatsApp Cloud / Twilio (TODO BE-041 — solo si está configurado)
   if (process.env.NODE_ENV === 'production' && process.env.WA_TOKEN) {
-    // TODO: integrar WhatsApp Cloud API
-    console.warn('[OTP] ⚠️ Integración WA Cloud no implementada todavía — código no enviado')
+    console.warn('[OTP] ⚠️ Integración WA Cloud no implementada todavía — código no enviado por WA')
   } else {
-    console.log(`[OTP DEV] 📱 Código ${codigo} para ${telefono} (expira en ${OTP_TTL_MIN} min)`)
+    console.log(`[OTP DEV] 🔓 Código ${codigo} para ${telefono} (TTL ${OTP_TTL_MIN} min)${process.env.NODE_ENV !== 'production' ? ' — en dev siempre 000000' : ''}`)
   }
 
-  return { ok: true, telefono, expiraEn }
+  // Canal 2: email (siempre que el cliente haya dejado uno). Fire and forget — no
+  // bloquea la respuesta si Gmail tarda, y los errores se loguean dentro del helper.
+  if (email) {
+    enviarEmail(email, 'otp-codigo', { codigo }).catch(() => {})
+  }
+
+  return { ok: true, telefono, emailEnviado: Boolean(email), expiraEn }
 }
 
 export async function verificarOtp(telefonoRaw, codigo) {
