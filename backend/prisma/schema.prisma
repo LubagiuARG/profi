@@ -35,8 +35,9 @@ model Profesional {
   localidadId    String?
   radioKm        Int?       @default(20)
 
-  pagos   Pago[]
-  resenas Resena[]
+  pagos       Pago[]
+  resenas     Resena[]
+  solicitudes Solicitud[]
 }
 
 model Categoria {
@@ -50,6 +51,57 @@ model Categoria {
   creadoEn    DateTime @default(now())
 
   profesionales Profesional[]
+  solicitudes   Solicitud[]
+}
+
+model Cliente {
+  id                    Int       @id @default(autoincrement())
+  nombre                String
+  telefono              String    @unique
+  email                 String?
+  identidadVerificada   Boolean   @default(false)
+  identidadVerificadaEn DateTime?
+  creadoEn              DateTime  @default(now())
+
+  solicitudes Solicitud[]
+}
+
+model Solicitud {
+  id                  Int       @id @default(autoincrement())
+  clienteId           Int?
+  clienteNombre       String
+  clienteTelefono     String
+  clienteEmail        String?
+  profesionalId       Int
+  categoriaId         Int
+  presupuestoSnapshot Json
+  mensajeExtra        String?
+  ubicacion           Json?
+  estado              String    @default("pendiente") // pendiente|aceptada|rechazada|expirada|cerrada
+  motivoRechazo       String?
+  respondidoEn        DateTime?
+  cerradoEn           DateTime?
+  expiraEn            DateTime
+  creadoEn            DateTime  @default(now())
+
+  cliente     Cliente?    @relation(fields: [clienteId], references: [id])
+  profesional Profesional @relation(fields: [profesionalId], references: [id])
+  categoria   Categoria   @relation(fields: [categoriaId], references: [id])
+
+  @@index([profesionalId, estado])
+  @@index([clienteTelefono])
+}
+
+model OtpCliente {
+  id           Int       @id @default(autoincrement())
+  telefono     String
+  codigoHash   String
+  intentos     Int       @default(0)
+  expiraEn     DateTime
+  verificadoEn DateTime?
+  creadoEn     DateTime  @default(now())
+
+  @@index([telefono, expiraEn])
 }
 
 model Admin {

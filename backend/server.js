@@ -30,6 +30,8 @@ import suscripcionesRouter    from './routes/suscripciones.js'
 import authRouter             from './routes/auth.js'
 import panelRouter            from './routes/panel.js'
 import categoriasPublicRouter from './routes/categorias.js'
+import clientesRouter         from './routes/clientes.js'
+import solicitudesRouter      from './routes/solicitudes.js'
 import adminAuthRouter        from './routes/admin/auth.js'
 import adminCategoriasRouter  from './routes/admin/categorias.js'
 import adminProfesRouter      from './routes/admin/profesionales.js'
@@ -79,6 +81,8 @@ app.use('/api/suscripciones', suscripcionesRouter)
 app.use('/api/auth',  authRouter)
 app.use('/api/panel', panelRouter)
 app.use('/api/categorias',          categoriasPublicRouter)
+app.use('/api/clientes',            clientesRouter)
+app.use('/api/solicitudes',         solicitudesRouter)
 app.use('/api/admin/auth',          adminAuthRouter)
 app.use('/api/admin/categorias',    adminCategoriasRouter)
 app.use('/api/admin/profesionales', adminProfesRouter)
