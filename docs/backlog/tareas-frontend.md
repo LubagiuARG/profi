@@ -112,7 +112,7 @@ Hay tokens en `global.css`. Sumar toggle. Persistir en localStorage.
 
 ## 🔴 P0 — Bloqueantes del MVP (lead matching y verificación)
 
-### `FE-040` CTA + modal "Contactar profesional" en `/presupuesto`
+### `FE-040` ✅ HECHO (2026-05-18) — CTA + modal "Contactar profesional" en `/presupuesto`
 - **Dónde:** `pages/Presupuesto.jsx`, al final del último mensaje de la IA.
 - **Comportamiento:**
   - CTA: "📞 Contactá a un profesional con este detalle"
@@ -121,7 +121,7 @@ Hay tokens en `global.css`. Sumar toggle. Persistir en localStorage.
   - Cliente selecciona checkbox de hasta 3
 - **Datos:** `POST /api/solicitudes/sugerencias` con `categoriaSlug` y `ubicacion`.
 
-### `FE-041` Form solicitud + OTP (multi-step)
+### `FE-041` ✅ HECHO (2026-05-18) — Form solicitud + OTP (multi-step)
 - **Dónde:** modal/wizard que continúa después de FE-040.
 - **Pasos:**
   1. Datos cliente (nombre, teléfono, email opcional, dirección aproximada)
@@ -131,7 +131,7 @@ Hay tokens en `global.css`. Sumar toggle. Persistir en localStorage.
 - **Estado:** loading mientras va al backend. Toast de éxito.
 - **Después:** página `/solicitudes/:id/gracias` con next steps ("te llegará un mail cuando alguien acepte").
 
-### `FE-042` Tab "Solicitudes" en `/panel` del pro
+### `FE-042` ✅ HECHO (2026-05-18) — Tab "Solicitudes" en `/panel` del pro
 - **Dónde:** `pages/Panel.jsx` (sumar tab si no hay tabs todavía).
 - **UI:**
   - Lista de solicitudes con estado (pendiente / aceptada / rechazada / expirada)
@@ -186,6 +186,17 @@ Hay tokens en `global.css`. Sumar toggle. Persistir en localStorage.
 
 ### 2026-05-18 · Multi-rubro en chat
 - **FE-003** — Selector de rubro en `/presupuesto`. Carga categorías desde `/api/categorias` y manda `categoriaSlug` al backend. Cambiar de rubro NO limpia el chat (afecta el próximo mensaje).
+
+### 2026-05-18 · Lead matching UI
+- **FE-040** — Panel de sugerencias en `/presupuesto`: usa `POST /api/solicitudes/sugerencias`
+  con `categoriaSlug`. ProCard con checkbox de selección múltiple (máx 3) y badge ✓ para
+  verificados. Botón "Pedir presupuesto a N profesionales" abre el wizard.
+- **FE-041** — `components/SolicitudWizard.jsx`: 3 pasos (datos → OTP → confirmar).
+  Hint visible en dev de que el código sale por consola del backend. Pantalla de éxito
+  con fecha de expiración. Maneja errores del backend (cooldown, código inválido, etc.).
+- **FE-042** — Tab "Solicitudes" en `/panel`: listado de solicitudes con estado, snapshot
+  del presupuesto, mensaje del cliente, botones aceptar / rechazar (con modal de motivo).
+  Si está aceptada, muestra datos del cliente + link WhatsApp.
 
 ### 2026-05-18 · Páginas y UX faltantes
 - **FE-004** — Nueva página `/como-funciona` con 3 pasos para clientes y 3 para profesionales. Links del Header y Footer apuntan ahora a la ruta dedicada (antes iban a `/#como-funciona` ancla en Home).

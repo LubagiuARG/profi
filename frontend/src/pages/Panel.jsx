@@ -2,9 +2,15 @@ import { useState, useEffect } from 'react'
 import { useNavigate }         from 'react-router-dom'
 import { useAuth }             from '../context/AuthContext'
 import SelectorUbicacion       from '../components/SelectorUbicacion'
+import Loader                  from '../components/Loader'
+import ErrorState              from '../components/ErrorState'
+import { getSolicitudesPanel, aceptarSolicitud, rechazarSolicitud } from '../services/api'
 import styles                  from './Panel.module.css'
 
 const API = import.meta.env.VITE_API_URL
+
+const FMT_FECHA = new Intl.DateTimeFormat('es-AR', { day: '2-digit', month: 'short', year: 'numeric' })
+const fmtFecha = iso => (iso ? FMT_FECHA.format(new Date(iso)) : '—')
 
 // ── Pestaña: Resumen ─────────────────────────────────────────────────────────
 function TabResumen({ profesional, getToken }) {
@@ -277,6 +283,193 @@ function TabPresupuestos({ profesional, getToken }) {
   )
 }
 
+// ── Pestaña: Solicitudes ─────────────────────────────────────────────────────
+function TabSolicitudes({ getToken }) {
+  const [solicitudes, setSolicitudes] = useState([])
+  const [cargando, setCargando]       = useState(true)
+  const [error, setError]             = useState('')
+  const [rechazo, setRechazo]         = useState(null) // { id, motivo }
+  const [accion, setAccion]           = useState(null) // id en proceso
+
+  const cargar = () => {
+    setCargando(true)
+    setError('')
+    getSolicitudesPanel(getToken())
+      .then(setSolicitudes)
+      .catch(err => setError(err.message))
+      .finally(() => setCargando(false))
+  }
+
+  useEffect(cargar, [])
+
+  const aceptar = async (id) => {
+    setAccion(id)
+    try {
+      await aceptarSolicitud(getToken(), id)
+      cargar()
+    } catch (err) {
+      alert(err.message)
+    } finally {
+      setAccion(null)
+    }
+  }
+
+  const confirmarRechazo = async () => {
+    if (!rechazo) return
+    setAccion(rechazo.id)
+    try {
+      await rechazarSolicitud(getToken(), rechazo.id, rechazo.motivo)
+      setRechazo(null)
+      cargar()
+    } catch (err) {
+      alert(err.message)
+    } finally {
+      setAccion(null)
+    }
+  }
+
+  if (cargando) return <div className={styles.tabContent}><Loader /></div>
+  if (error)    return <div className={styles.tabContent}><ErrorState mensaje={error} onRetry={cargar} /></div>
+
+  const pendientes = solicitudes.filter(s => s.estado === 'pendiente').length
+  const historicas = solicitudes.length - pendientes
+
+  return (
+    <div className={styles.tabContent}>
+      <div className={styles.section}>
+        <h2 className={styles.sectionTitle}>
+          Solicitudes recibidas
+          {pendientes > 0 && <span className={styles.pendBadge}> · {pendientes} pendiente{pendientes !== 1 ? 's' : ''}</span>}
+        </h2>
+        <p className={styles.sectionDesc}>
+          Te llegan acá los pedidos de clientes que terminaron un presupuesto con la IA.
+          {historicas > 0 && ` (${historicas} histórica${historicas !== 1 ? 's' : ''})`}
+        </p>
+      </div>
+
+      {solicitudes.length === 0 && (
+        <div className={styles.section} style={{ textAlign: 'center', padding: '2rem 1rem' }}>
+          <div style={{ fontSize: '2rem' }}>📭</div>
+          <p className={styles.sectionDesc}>Todavía no recibiste ninguna solicitud.</p>
+        </div>
+      )}
+
+      {solicitudes.map(s => {
+        const tel = (s.clienteTelefono || '').replace(/\D/g, '')
+        const waLink = tel ? `https://wa.me/${tel}?text=${encodeURIComponent(`Hola ${s.clienteNombre}, vengo de TuProfesional por tu pedido.`)}` : null
+        return (
+          <div key={s.id} className={`${styles.section} ${styles.solCard}`}>
+            <div className={styles.solHeader}>
+              <div>
+                <div className={styles.solCliente}>
+                  {s.clienteNombre}
+                  {s.cliente?.identidadVerificada && <span className={styles.solBadgeVer} title="Identidad verificada">✓</span>}
+                </div>
+                <div className={styles.solMeta}>
+                  {s.categoria?.emoji} {s.categoria?.nombre} · {fmtFecha(s.creadoEn)}
+                </div>
+              </div>
+              <span className={`${styles.solBadge} ${styles[`solBadge_${s.estado}`]}`}>
+                {s.estado}
+              </span>
+            </div>
+
+            {s.presupuestoSnapshot?.consulta && (
+              <div className={styles.solConsulta}>
+                <strong>Pedido:</strong> {s.presupuestoSnapshot.consulta}
+              </div>
+            )}
+
+            {s.presupuestoSnapshot?.total && (
+              <div className={styles.solTotal}>
+                <strong>Total estimado por IA:</strong> {s.presupuestoSnapshot.total}
+              </div>
+            )}
+
+            {s.mensajeExtra && (
+              <div className={styles.solMensaje}>
+                <strong>Mensaje del cliente:</strong>
+                <br />{s.mensajeExtra}
+              </div>
+            )}
+
+            {s.estado === 'pendiente' && (
+              <div className={styles.solExpira}>
+                Expira el {fmtFecha(s.expiraEn)}
+              </div>
+            )}
+
+            {s.estado === 'aceptada' && (
+              <div className={styles.solContacto}>
+                <strong>📞 Contacto del cliente:</strong> {s.clienteTelefono}
+                {s.clienteEmail && <> · {s.clienteEmail}</>}
+                {waLink && (
+                  <a href={waLink} target="_blank" rel="noreferrer" className={`btn btn-outline ${styles.solWaBtn}`}>
+                    💬 Escribir por WhatsApp
+                  </a>
+                )}
+              </div>
+            )}
+
+            {s.motivoRechazo && (
+              <div className={styles.solRechazo}>
+                <strong>Motivo del rechazo:</strong> {s.motivoRechazo}
+              </div>
+            )}
+
+            {s.estado === 'pendiente' && (
+              <div className={styles.solAcciones}>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => aceptar(s.id)}
+                  disabled={accion === s.id}
+                >
+                  {accion === s.id ? 'Aceptando...' : '✓ Aceptar'}
+                </button>
+                <button
+                  className="btn btn-outline"
+                  onClick={() => setRechazo({ id: s.id, motivo: '' })}
+                  disabled={accion === s.id}
+                >
+                  Rechazar
+                </button>
+              </div>
+            )}
+          </div>
+        )
+      })}
+
+      {rechazo && (
+        <div className={styles.modalBackdrop} onClick={e => e.target === e.currentTarget && setRechazo(null)}>
+          <div className={styles.modal}>
+            <h3 className={styles.modalTitle}>Rechazar solicitud</h3>
+            <p className={styles.sectionDesc}>
+              Le vamos a avisar al cliente. Si querés, dejale un motivo (opcional).
+            </p>
+            <textarea
+              className="input"
+              rows={3}
+              placeholder="Ej: estoy fuera de zona, agenda completa este mes..."
+              value={rechazo.motivo}
+              onChange={e => setRechazo(r => ({ ...r, motivo: e.target.value }))}
+              style={{ resize: 'vertical', marginTop: '0.5rem' }}
+              autoFocus
+            />
+            <div style={{ display: 'flex', gap: '.5rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
+              <button className="btn btn-outline" onClick={() => setRechazo(null)} disabled={accion}>
+                Cancelar
+              </button>
+              <button className="btn btn-primary" onClick={confirmarRechazo} disabled={accion}>
+                {accion ? 'Rechazando...' : 'Confirmar rechazo'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ── Pestaña: Mi perfil ───────────────────────────────────────────────────────
 function TabPerfil({ profesional, getToken }) {
   const [form, setForm]       = useState({})
@@ -447,6 +640,7 @@ function TabCuenta({ logout, getToken, navigate }) {
 // ── Panel principal ──────────────────────────────────────────────────────────
 const TABS = [
   { id: 'resumen',       label: '📊 Resumen'       },
+  { id: 'solicitudes',   label: '📥 Solicitudes'   },
   { id: 'presupuestos',  label: '💰 Presupuestos'  },
   { id: 'perfil',        label: '👤 Mi perfil'     },
   { id: 'cuenta',        label: '⚙️ Cuenta'         },
@@ -494,6 +688,7 @@ export default function Panel() {
 
       {/* Contenido de cada tab */}
       {tabActiva === 'resumen'      && <TabResumen      profesional={profesional} getToken={getToken} />}
+      {tabActiva === 'solicitudes'  && <TabSolicitudes  getToken={getToken} />}
       {tabActiva === 'presupuestos' && <TabPresupuestos profesional={profesional} getToken={getToken} />}
       {tabActiva === 'perfil'       && <TabPerfil       profesional={profesional} getToken={getToken} />}
       {tabActiva === 'cuenta'       && <TabCuenta       logout={logout} getToken={getToken} navigate={navigate} />}

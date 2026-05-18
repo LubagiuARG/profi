@@ -1,8 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
 import { useChat } from '../hooks/useChat'
+import { getSugerenciasSolicitud } from '../services/api'
+import SolicitudWizard from '../components/SolicitudWizard'
 import styles from './Presupuesto.module.css'
 
 const API = import.meta.env.VITE_API_URL
+const MAX_SELECCION = 3
 
 const SUGGESTIONS = [
   'Cambiar tablero eléctrico',
@@ -20,18 +23,18 @@ function avatarColor(nombre = '') {
   return AVATAR_COLORS[code]
 }
 
-// ── Card de profesional ──────────────────────────────────────────────────────
-function ProCard({ pro, ultimaConsulta, ultimoTotal }) {
+// ── Card de profesional con checkbox de selección ────────────────────────────
+function ProCard({ pro, seleccionado, onToggle, disabled }) {
   const inicial = (pro.nombre || '?')[0].toUpperCase()
-
-  const contactarWA = () => {
-    const tel = (pro.telefono || '').replace(/\D/g, '')
-    const msg = `Hola ${pro.nombre}! Te contacto desde TuProfesional. 🔧\n\nNecesito: ${ultimaConsulta}\n\n💰 Presupuesto orientativo que obtuve: ${ultimoTotal}\n\n¿Podés darme un presupuesto real para este trabajo?`
-    window.open(`https://wa.me/54${tel}?text=${encodeURIComponent(msg)}`, '_blank')
-  }
-
   return (
-    <div className={styles.proCard}>
+    <label className={`${styles.proCard} ${seleccionado ? styles.proCardSel : ''} ${disabled ? styles.proCardDisabled : ''}`}>
+      <input
+        type="checkbox"
+        className={styles.proCheck}
+        checked={seleccionado}
+        onChange={() => onToggle(pro.id)}
+        disabled={disabled && !seleccionado}
+      />
       <div className={styles.proAvatar} style={{ background: avatarColor(pro.nombre) }}>
         {inicial}
       </div>
@@ -39,16 +42,17 @@ function ProCard({ pro, ultimaConsulta, ultimoTotal }) {
         <div className={styles.proNameRow}>
           <span className={styles.proName}>{pro.nombre} {pro.apellido}</span>
           {pro.plan === 'pro' && <span className={styles.proBadge}>PRO</span>}
+          {pro.verificado && <span className={styles.proBadgeVer} title="Verificado">✓</span>}
         </div>
         <div className={styles.proZona}>{pro.zona || pro.provincia || '—'}</div>
         {pro.rating > 0 && (
-          <div className={styles.proRating}>{'★'.repeat(Math.round(pro.rating))} {pro.rating.toFixed(1)}</div>
+          <div className={styles.proRating}>
+            {'★'.repeat(Math.round(pro.rating))} {pro.rating.toFixed(1)}
+            <span className={styles.proReviews}>({pro.reviews})</span>
+          </div>
         )}
       </div>
-      <button className={styles.waBtn} onClick={contactarWA}>
-        💬 WhatsApp
-      </button>
-    </div>
+    </label>
   )
 }
 
@@ -146,6 +150,9 @@ export default function Presupuesto() {
   const [mostrarProfesionales, setMostrarProfesionales] = useState(false)
   const [profesionalesDisponibles, setProfesionalesDisponibles] = useState([])
   const [cargandoProfesionales, setCargandoProfesionales] = useState(false)
+  const [errorPros, setErrorPros] = useState('')
+  const [seleccionados, setSeleccionados] = useState([])
+  const [wizardAbierto, setWizardAbierto] = useState(false)
 
   useEffect(() => {
     fetch(`${API}/api/categorias`)
@@ -168,20 +175,27 @@ export default function Presupuesto() {
   useEffect(() => {
     if (!mostrarProfesionales) return
     setCargandoProfesionales(true)
-    fetch(`${API}/api/profesionales?limit=6`)
-      .then(r => r.json())
+    setErrorPros('')
+    setSeleccionados([])
+    getSugerenciasSolicitud(categoriaSlug)
       .then(data => {
-        const lista = Array.isArray(data) ? data : data.profesionales ?? []
-        const sorted = [...lista].sort((a, b) => {
-          if (a.plan === 'pro' && b.plan !== 'pro') return -1
-          if (b.plan === 'pro' && a.plan !== 'pro') return  1
-          return (b.rating || 0) - (a.rating || 0)
-        })
-        setProfesionalesDisponibles(sorted.slice(0, 3))
+        const lista = Array.isArray(data?.profesionales) ? data.profesionales : []
+        setProfesionalesDisponibles(lista)
       })
-      .catch(() => setProfesionalesDisponibles([]))
+      .catch(err => {
+        setErrorPros(err.message)
+        setProfesionalesDisponibles([])
+      })
       .finally(() => setCargandoProfesionales(false))
-  }, [mostrarProfesionales])
+  }, [mostrarProfesionales, categoriaSlug])
+
+  const toggleSeleccion = (id) => {
+    setSeleccionados(prev =>
+      prev.includes(id)
+        ? prev.filter(x => x !== id)
+        : prev.length >= MAX_SELECCION ? prev : [...prev, id]
+    )
+  }
 
   const handleSend = () => {
     if (!input.trim() || loading) return
@@ -203,16 +217,19 @@ export default function Presupuesto() {
     }
   }
 
-  // Última consulta del usuario y último total para el mensaje WhatsApp
+  // Última consulta del usuario y último presupuesto para mandar al wizard
   const userMessages = messages.filter(m => m.role === 'user')
   const ultimaConsulta = userMessages[userMessages.length - 1]?.ui?.text || ''
 
   const aiMessages = messages.filter(m => m.role === 'assistant' && m.ui?.type === 'budget')
-  const ultimoTotal = aiMessages[aiMessages.length - 1]?.ui?.total || 'a calcular'
+  const ultimoBudget = aiMessages[aiMessages.length - 1]?.ui || null
 
   // El botón "ver profesionales" aparece solo en el último mensaje IA con budget
   const lastBudgetIdx = messages.reduce((acc, m, i) =>
     m.role === 'assistant' && m.ui?.type === 'budget' && m.ui?.items?.length > 0 ? i : acc, -1)
+
+  const profesionalesSeleccionados = profesionalesDisponibles.filter(p => seleccionados.includes(p.id))
+  const categoriaActual = categorias.find(c => c.slug === categoriaSlug)
 
   return (
     <div className={styles.page}>
@@ -277,21 +294,45 @@ export default function Presupuesto() {
           {mostrarProfesionales && (
             <div className={styles.prosPanel}>
               <div className={styles.prosPanelHeader}>
-                <span className={styles.prosPanelTitle}>Profesionales disponibles</span>
+                <div>
+                  <span className={styles.prosPanelTitle}>
+                    {categoriaActual?.emoji} {categoriaActual?.nombre || 'Profesionales'} cerca tuyo
+                  </span>
+                  <p className={styles.prosPanelHint}>
+                    Elegí hasta {MAX_SELECCION} para que reciban tu pedido.
+                  </p>
+                </div>
                 <button className={styles.prosPanelClose} onClick={() => setMostrarProfesionales(false)}>✕</button>
               </div>
               {cargandoProfesionales && <p className={styles.prosLoading}>Buscando profesionales...</p>}
-              {!cargandoProfesionales && profesionalesDisponibles.length === 0 && (
-                <p className={styles.prosLoading}>No hay profesionales disponibles en este momento.</p>
+              {errorPros && !cargandoProfesionales && (
+                <p className={styles.prosLoading}>⚠️ {errorPros}</p>
+              )}
+              {!cargandoProfesionales && !errorPros && profesionalesDisponibles.length === 0 && (
+                <p className={styles.prosLoading}>
+                  No hay profesionales registrados para {categoriaActual?.nombre || 'esta categoría'} todavía.
+                </p>
               )}
               {!cargandoProfesionales && profesionalesDisponibles.map(pro => (
                 <ProCard
                   key={pro.id}
                   pro={pro}
-                  ultimaConsulta={ultimaConsulta}
-                  ultimoTotal={ultimoTotal}
+                  seleccionado={seleccionados.includes(pro.id)}
+                  onToggle={toggleSeleccion}
+                  disabled={seleccionados.length >= MAX_SELECCION}
                 />
               ))}
+              {profesionalesDisponibles.length > 0 && (
+                <button
+                  className={`btn btn-primary ${styles.solicitarBtn}`}
+                  onClick={() => setWizardAbierto(true)}
+                  disabled={seleccionados.length === 0}
+                >
+                  {seleccionados.length === 0
+                    ? 'Elegí al menos un profesional'
+                    : `Pedir presupuesto a ${seleccionados.length} ${seleccionados.length === 1 ? 'profesional' : 'profesionales'} →`}
+                </button>
+              )}
             </div>
           )}
 
@@ -311,6 +352,22 @@ export default function Presupuesto() {
             </div>
           </div>
         )}
+
+        {/* Wizard de solicitud */}
+        <SolicitudWizard
+          abierto={wizardAbierto}
+          onCerrar={() => {
+            setWizardAbierto(false)
+            // si la solicitud se mandó OK, cerramos también el panel
+            setMostrarProfesionales(false)
+            setSeleccionados([])
+          }}
+          categoriaSlug={categoriaSlug}
+          categoriaNombre={categoriaActual?.nombre}
+          profesionales={profesionalesSeleccionados}
+          presupuestoSnapshot={ultimoBudget}
+          ultimaConsulta={ultimaConsulta}
+        />
 
         {/* Input */}
         <div className={styles.inputArea}>

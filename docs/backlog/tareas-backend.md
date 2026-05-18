@@ -133,7 +133,7 @@ Hoy se parsea con `try/catch`. Sumar `response_format` o tool calling para forza
 
 ## 🔴 P0 — Bloqueantes del MVP (lead matching y verificación)
 
-### `BE-040` Modelo + endpoints de Solicitud (lead matching)
+### `BE-040` ✅ HECHO (2026-05-18) — Modelo + endpoints de Solicitud (lead matching)
 - **Por qué P0:** corazón de la conexión cliente↔profesional. Sin esto, Profi es solo un directorio + chat.
 - **Schema nuevo:** `Solicitud` (ver [`05-modelo-datos.md`](../05-modelo-datos.md)).
 - **Endpoints:**
@@ -149,7 +149,7 @@ Hoy se parsea con `try/catch`. Sumar `response_format` o tool calling para forza
   - Expiración 7 días sin respuesta
   - Anti-spam: rate limit por teléfono (5/día) e IP
 
-### `BE-041` OTP por SMS/WhatsApp para clientes
+### `BE-041` 🟦 PARCIAL (2026-05-18) — OTP por SMS/WhatsApp para clientes
 - **Por qué:** el cliente no se loguea con password — verifica teléfono y crea solicitud. OTP es la barrera anti-spam mínima.
 - **Endpoints:**
   - `POST /api/clientes/otp/enviar` `{ telefono }` — manda código 6 dígitos, TTL 10 min
@@ -158,7 +158,7 @@ Hoy se parsea con `try/catch`. Sumar `response_format` o tool calling para forza
 - **Tabla nueva:** `OtpCliente { telefono, codigoHash, intentos, expiraEn }`.
 - **Vars:** `TWILIO_*` o `WA_TOKEN` + `WA_PHONE_ID`.
 
-### `BE-042` Modelo Cliente
+### `BE-042` ✅ HECHO (2026-05-18) — Modelo Cliente
 - **Schema nuevo:** `Cliente` (ver [`05-modelo-datos.md`](../05-modelo-datos.md)).
 - **Notas:**
   - Sin password — auth solo por OTP por ahora
@@ -232,6 +232,18 @@ Hoy se parsea con `try/catch`. Sumar `response_format` o tool calling para forza
 
 ### 2026-05-18 · Multi-rubro en chat
 - **BE-004** — `/api/chat` acepta `categoriaSlug`. Resuelve la categoría contra la DB. Si el slug está en `RUBROS_CON_TABLA_CMO` usa la tabla CMO + prompt actual; sino usa un prompt genérico que aclara "estimaciones sin tabla oficial". `_meta` incluye `categoriaSlug`, `categoriaNombre` y `conTablaOficial`.
+
+### 2026-05-18 · Lead matching (corazón del MVP)
+- **BE-040** — Modelo `Solicitud` + endpoints completos:
+  `POST /api/solicitudes/sugerencias` (top 6, orden PRO→verificado→rating→reviews),
+  `POST /api/solicitudes` (crea N solicitudes con expiraEn=+7d, mail mock al pro).
+- **BE-041 PARCIAL** — Endpoints OTP funcionan (`POST /api/clientes/otp/enviar`,
+  `POST /api/clientes/otp/verificar`) con `services/otp.js`: cooldown 60s, TTL 10 min,
+  máx 5 intentos, JWT cliente TTL 30 min. **En dev el código se loguea por consola.**
+  Falta integrar WhatsApp Cloud API o Twilio (requiere cuenta + token).
+- **BE-042** — Modelo `Cliente` + `OtpCliente`. Sin password, auth por OTP. Upsert por teléfono.
+- Endpoints panel del pro: `GET /api/panel/solicitudes`, `PATCH .../aceptar | rechazar` con
+  mail mock al cliente. Patch perezoso de expiradas.
 
 ### 2026-05-18 · Rebranding ElectroAR/Profi → TuProfesional
 - **BE-003** — Reemplazado "ElectroAR" y "Profi" por "TuProfesional" en strings user-facing: system prompts de `routes/chat.js`, `PLAN_NOMBRE` en `suscripciones.js`, log de startup en `server.js`, headers de archivos, `.env.example`, `package.json`, `README.md`. También removido el default `electro-ar-secret-key` en `middleware/adminAuth.js` (BE-016 incompleto).

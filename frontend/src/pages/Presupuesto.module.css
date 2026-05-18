@@ -569,3 +569,78 @@
   .inputArea { padding: 0.65rem 0.75rem; }
   .suggestions { padding: 0.65rem 0.75rem; }
 }
+
+/* ── Selección múltiple de profesionales (lead matching) ─────────── */
+
+.prosPanelHint {
+  font-size: 0.74rem;
+  color: var(--ink2, #888);
+  margin: 2px 0 0;
+  font-weight: 400;
+}
+
+.proCard {
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.proCard:hover {
+  background: var(--surface, #fafafa);
+}
+
+.proCardSel {
+  background: var(--accent-soft, #fef9e8);
+}
+
+.proCardSel:hover {
+  background: var(--accent-soft, #fef9e8);
+}
+
+.proCardDisabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.proCheck {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--ink, #1a1a1a);
+  flex-shrink: 0;
+}
+
+.proCheck:disabled {
+  cursor: not-allowed;
+}
+
+.proBadgeVer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: #2563eb;
+  color: white;
+  border-radius: 50%;
+  font-size: 0.6rem;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.proReviews {
+  font-size: 0.7rem;
+  color: var(--ink2, #888);
+  margin-left: 4px;
+  font-weight: 400;
+}
+
+.solicitarBtn {
+  margin: 0.75rem 1rem 1rem;
+  width: calc(100% - 2rem);
+  font-size: 0.92rem;
+}
+
+.solicitarBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
