@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'electro-ar-secret-key'
+const JWT_SECRET = process.env.JWT_SECRET
 
 export function authMiddleware(req, res, next) {
   const header = req.headers.authorization

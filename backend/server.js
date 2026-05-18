@@ -9,6 +9,15 @@
  */
 
 import 'dotenv/config'
+
+const ENV_REQUERIDAS = ['JWT_SECRET', 'DATABASE_URL']
+const faltantes = ENV_REQUERIDAS.filter(k => !process.env[k])
+if (faltantes.length) {
+  console.error(`[Startup] ❌ Faltan variables de entorno requeridas: ${faltantes.join(', ')}`)
+  console.error('[Startup] Configurá .env (local) o las variables del panel (Railway) y reintentá.')
+  process.exit(1)
+}
+
 import express from 'express'
 import helmet from 'helmet'
 import cors from 'cors'

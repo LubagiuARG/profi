@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import bcrypt from 'bcryptjs'
 import { PrismaClient } from '@prisma/client'
-import { generarToken } from '../middleware/auth.js'
+import { generarToken, authMiddleware } from '../middleware/auth.js'
 
 const router = Router()
 const prisma = new PrismaClient()
@@ -100,19 +100,10 @@ router.post('/login', async (req, res) => {
 })
 
 // GET /api/auth/me — Ver perfil propio
-router.get('/me', async (req, res) => {
-  const header = req.headers.authorization
-  if (!header?.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'No autorizado' })
-  }
+router.get('/me', authMiddleware, async (req, res) => {
   try {
-    const jwt = await import('jsonwebtoken')
-    const payload = jwt.default.verify(
-      header.split(' ')[1],
-      process.env.JWT_SECRET || 'electro-ar-secret-key'
-    )
     const profesional = await prisma.profesional.findUnique({
-      where: { id: payload.id },
+      where: { id: req.profesionalId },
       select: {
         id: true, nombre: true, apellido: true, email: true,
         telefono: true, matricula: true, provincia: true,
@@ -124,8 +115,9 @@ router.get('/me', async (req, res) => {
     })
     if (!profesional) return res.status(404).json({ error: 'No encontrado' })
     return res.json(profesional)
-  } catch {
-    return res.status(401).json({ error: 'Token inválido' })
+  } catch (error) {
+    console.error('[Auth] Error /me:', error.message)
+    return res.status(500).json({ error: 'Error interno' })
   }
 })
 

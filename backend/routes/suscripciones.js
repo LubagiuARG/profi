@@ -4,6 +4,7 @@
  */
 
 import { Router } from 'express'
+import crypto from 'crypto'
 import { MercadoPagoConfig, PreApprovalPlan, PreApproval } from 'mercadopago'
 import { PrismaClient } from '@prisma/client'
 
@@ -16,6 +17,46 @@ const client  = new MercadoPagoConfig({
 const PLAN_MONTO  = 20000
 const PLAN_NOMBRE = 'Tu profesional — Plan PRO'
 const BACK_URL    = process.env.FRONTEND_URL || 'http://localhost:5173'
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Verificación de firma del webhook MP (BE-001)
+// MP firma: HMAC-SHA256(secret, `id:${data.id};request-id:${xRequestId};ts:${ts};`)
+// Headers: x-signature (formato `ts=...,v1=...`) y x-request-id.
+// Docs: https://www.mercadopago.com.ar/developers/es/docs/your-integrations/notifications/webhooks
+// ─────────────────────────────────────────────────────────────────────────────
+function verificarFirmaMP(req) {
+  const secret = process.env.MP_WEBHOOK_SECRET
+  if (!secret) {
+    // En prod: no aceptar webhooks sin secret configurado. En dev: dejar pasar con warning.
+    if (process.env.NODE_ENV === 'production') {
+      return { ok: false, motivo: 'MP_WEBHOOK_SECRET no configurado' }
+    }
+    console.warn('[Webhook MP] ⚠️ MP_WEBHOOK_SECRET no configurado — validación de firma saltada (solo permitido en dev)')
+    return { ok: true, saltado: true }
+  }
+
+  const firma     = req.headers['x-signature']
+  const requestId = req.headers['x-request-id']
+  const dataId    = req.body?.data?.id
+
+  if (!firma || !requestId || !dataId) {
+    return { ok: false, motivo: 'Headers o data.id faltantes' }
+  }
+
+  const partes = Object.fromEntries(
+    firma.split(',').map(p => p.split('=').map(s => s.trim()))
+  )
+  const ts = partes.ts
+  const v1 = partes.v1
+  if (!ts || !v1) return { ok: false, motivo: 'x-signature mal formada' }
+
+  const manifest = `id:${dataId};request-id:${requestId};ts:${ts};`
+  const esperado = crypto.createHmac('sha256', secret).update(manifest).digest('hex')
+
+  const ok = v1.length === esperado.length &&
+             crypto.timingSafeEqual(Buffer.from(v1), Buffer.from(esperado))
+  return ok ? { ok: true } : { ok: false, motivo: 'Firma inválida' }
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // POST /api/suscripciones/crear
@@ -72,6 +113,12 @@ router.post('/crear', async (req, res) => {
 // ─────────────────────────────────────────────────────────────────────────────
 router.post('/webhook', async (req, res) => {
   try {
+    const verificacion = verificarFirmaMP(req)
+    if (!verificacion.ok) {
+      console.warn(`[Webhook MP] ❌ Firma rechazada: ${verificacion.motivo}`)
+      return res.sendStatus(401)
+    }
+
     const { type, data } = req.body
 
     console.log('[Webhook MP] Evento recibido:', type, data?.id)
@@ -90,15 +137,22 @@ router.post('/webhook', async (req, res) => {
           data:  { plan: 'pro', verificado: true },
         })
 
-        // Registrar pago
-        await prisma.pago.create({
-          data: {
-            profesionalId,
-            monto:       PLAN_MONTO,
-            estado:      'aprobado',
-            mpPaymentId: data.id,
-          },
+        // Registrar pago (BE-017: idempotente por mpPaymentId)
+        const pagoExistente = await prisma.pago.findFirst({
+          where: { mpPaymentId: String(data.id) },
         })
+        if (pagoExistente) {
+          console.log(`[Webhook MP] ↩️ Pago ${data.id} ya registrado, salteo creación`)
+        } else {
+          await prisma.pago.create({
+            data: {
+              profesionalId,
+              monto:       PLAN_MONTO,
+              estado:      'aprobado',
+              mpPaymentId: String(data.id),
+            },
+          })
+        }
 
         console.log(`[Webhook MP] ✅ Plan PRO activado para profesional ${profesionalId}`)
 

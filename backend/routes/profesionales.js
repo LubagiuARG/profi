@@ -128,32 +128,4 @@ router.post('/', async (req, res) => {
   }
 })
 
-// PATCH /api/profesionales/:id/plan — Actualizar plan (lo llama MercadoPago webhook)
-router.patch('/:id/plan', async (req, res) => {
-  try {
-    const { plan, mpPaymentId } = req.body
-
-    const profesional = await prisma.profesional.update({
-      where: { id: parseInt(req.params.id) },
-      data:  { plan, verificado: plan === 'pro' },
-    })
-
-    // Registrar el pago
-    if (mpPaymentId) {
-      await prisma.pago.create({
-        data: {
-          profesionalId: profesional.id,
-          monto:          8900,
-          estado:         'aprobado',
-          mpPaymentId,
-        },
-      })
-    }
-
-    return res.json({ ok: true, plan: profesional.plan })
-  } catch (error) {
-    return res.status(500).json({ error: 'Error al actualizar plan' })
-  }
-})
-
 export default router

@@ -4,7 +4,7 @@
 
 ## 🔴 P0 — Bloqueantes del MVP
 
-### `BE-001` 🐛 Verificar firma del webhook de MercadoPago
+### `BE-001` ✅ HECHO (2026-05-18) — Verificar firma del webhook de MercadoPago
 - **Dónde:** `routes/suscripciones.js:73`
 - **Problema:** El webhook acepta cualquier POST sin validar que venga realmente de MP. Cualquiera con la URL puede simular un pago aprobado y obtener Plan PRO gratis.
 - **Qué hacer:**
@@ -13,7 +13,7 @@
   - Devolver 401 si la firma no matchea, antes de tocar la DB.
 - **Tests:** simular request con firma válida, inválida, y sin firma.
 
-### `BE-002` 🐛 Unificar montos de plan PRO
+### `BE-002` ✅ HECHO (2026-05-18) — Unificar montos de plan PRO
 - **Dónde:** `routes/suscripciones.js:16` (`$20.000`) vs `routes/electricistas.js:146` (`$8.900`).
 - **Problema:** Si alguien dispara el endpoint legacy `PATCH /api/electricistas/:id/plan`, registra un pago a $8.900 — es un monto antiguo que quedó hardcoded.
 - **Qué hacer:**
@@ -72,12 +72,12 @@
   - Verificar contra Google, crear o linkear cuenta.
   - JWT propio como respuesta (mismo flujo que login actual).
 
-### `BE-013` Renombrar `Electricista` → `Profesional`
+### `BE-013` ✅ HECHO — Renombrar `Electricista` → `Profesional`
 - **Dónde:** `prisma/schema.prisma`, todas las rutas, todos los `prisma.electricista.*`.
 - **Riesgo:** cambio grande, una sola PR si se hace bien (usar `@map` para no obligar a renombrar la tabla en DB en el primer paso).
 - **Estrategia:** ver [`06-rebranding.md`](../06-rebranding.md).
 
-### `BE-014` Alias `/api/profesionales` → `/api/electricistas`
+### `BE-014` ✅ HECHO — Alias `/api/profesionales` → `/api/electricistas`
 - **Por qué:** preparar el rebranding sin romper frontend.
 - **Qué hacer:** copiar el router de electricistas y exponerlo también bajo `/api/profesionales`. Marcar `electricistas` como deprecated en logs.
 
@@ -86,12 +86,12 @@
 - **Stack sugerido:** `vitest` o `node:test` (sin frameworks pesados). Supertest para HTTP.
 - **Cobertura mínima:** auth (registro/login), crear suscripción, parser del scraper.
 
-### `BE-016` 🐛 `JWT_SECRET` no debe tener default
+### `BE-016` ✅ HECHO (2026-05-18) — `JWT_SECRET` no debe tener default
 - **Dónde:** `middleware/auth.js` y `routes/auth.js:112` usan `process.env.JWT_SECRET || 'electro-ar-secret-key'`.
 - **Riesgo:** si alguien deploya sin configurarlo, los tokens son fáciles de falsificar.
 - **Qué hacer:** crashear el servidor en startup si la var no está seteada.
 
-### `BE-017` Idempotencia del webhook MP
+### `BE-017` ✅ HECHO (2026-05-18) — Idempotencia del webhook MP
 - **Problema:** MP puede reintentar el mismo evento. Hoy crearíamos varias filas en `Pago` por el mismo pago.
 - **Qué hacer:** chequear `mpPaymentId` antes de crear el `Pago`. Si ya existe, devolver 200 sin tocar DB.
 
@@ -224,4 +224,12 @@ Hoy se parsea con `try/catch`. Sumar `response_format` o tool calling para forza
 
 ## Hechas
 
-(vacío)
+### 2026-05-18 · Higiene + seguridad
+- **BE-001** — Verificación de firma HMAC-SHA256 en webhook MP (`routes/suscripciones.js`). En prod rechaza si falta `MP_WEBHOOK_SECRET`; en dev deja pasar con warning.
+- **BE-002** — Borrado el endpoint legacy `PATCH /api/profesionales/:id/plan` con monto $8.900 hardcoded. El único flujo de plan vive en el webhook MP a $20.000.
+- **BE-016** — Crash en startup si falta `JWT_SECRET` (`server.js`). Removido el default `'electro-ar-secret-key'` de `middleware/auth.js`. Refactor de `/api/auth/me` para usar el `authMiddleware` en vez de duplicar la lógica.
+- **BE-017** — Idempotencia del webhook: chequea `mpPaymentId` antes de crear `Pago` duplicado.
+
+### Pre-existentes (encontrados ya hechos al revisar el código)
+- **BE-013** — Modelo Prisma ya se llama `Profesional`, no `Electricista`.
+- **BE-014** — Ruta `/api/electricistas` reemplazada por `/api/profesionales` (no es alias, es reemplazo).
