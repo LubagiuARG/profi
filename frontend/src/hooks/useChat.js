@@ -10,7 +10,7 @@ const WELCOME = {
   },
 }
 
-export function useChat(userType) {
+export function useChat(userType, categoriaSlug) {
   const [messages, setMessages] = useState([WELCOME])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -34,7 +34,7 @@ export function useChat(userType) {
 
       try {
         const apiHistory = getApiHistory(next)
-        const result = await askClaude(apiHistory, userType)
+        const result = await askClaude(apiHistory, userType, categoriaSlug)
 
         const assistantMsg = {
           role: 'assistant',
@@ -63,7 +63,7 @@ export function useChat(userType) {
         setLoading(false)
       }
     },
-    [messages, loading, userType, getApiHistory]
+    [messages, loading, userType, categoriaSlug, getApiHistory]
   )
 
   const clearChat = useCallback(() => {

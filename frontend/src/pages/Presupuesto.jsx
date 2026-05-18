@@ -137,13 +137,29 @@ function TypingIndicator() {
 // ── Página principal ─────────────────────────────────────────────────────────
 export default function Presupuesto() {
   const [input, setInput] = useState('')
-  const { messages, loading, sendMessage, clearChat } = useChat()
+  const [categorias, setCategorias] = useState([])
+  const [categoriaSlug, setCategoriaSlug] = useState('profesional')
+  const { messages, loading, sendMessage, clearChat } = useChat('particular', categoriaSlug)
   const bottomRef = useRef(null)
   const inputRef  = useRef(null)
 
   const [mostrarProfesionales, setMostrarProfesionales] = useState(false)
   const [profesionalesDisponibles, setProfesionalesDisponibles] = useState([])
   const [cargandoProfesionales, setCargandoProfesionales] = useState(false)
+
+  useEffect(() => {
+    fetch(`${API}/api/categorias`)
+      .then(r => r.json())
+      .then(data => {
+        const lista = Array.isArray(data) ? data : []
+        setCategorias(lista)
+        if (lista.length && !lista.find(c => c.slug === categoriaSlug)) {
+          setCategoriaSlug(lista[0].slug)
+        }
+      })
+      .catch(() => setCategorias([]))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -221,9 +237,28 @@ export default function Presupuesto() {
             <span className={styles.aiDot} />
             <div className={styles.chatTitle}>Asistente TuProfesional</div>
           </div>
-          <button className="btn btn-ghost" onClick={() => { clearChat(); setMostrarProfesionales(false) }} title="Limpiar conversación">
-            🗑️
-          </button>
+          <div className={styles.chatHeaderRight}>
+            {categorias.length > 0 && (
+              <label className={styles.rubroLabel}>
+                <span className={styles.rubroLabelText}>Rubro:</span>
+                <select
+                  className={styles.rubroSelect}
+                  value={categoriaSlug}
+                  onChange={e => setCategoriaSlug(e.target.value)}
+                  disabled={loading}
+                >
+                  {categorias.map(c => (
+                    <option key={c.slug} value={c.slug}>
+                      {c.emoji} {c.nombre}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+            <button className="btn btn-ghost" onClick={() => { clearChat(); setMostrarProfesionales(false) }} title="Limpiar conversación">
+              🗑️
+            </button>
+          </div>
         </div>
 
         {/* Mensajes */}

@@ -23,7 +23,7 @@
   - Menciona `VITE_ANTHROPIC_KEY` — **es un riesgo de seguridad** si un colaborador nuevo lo configura y deploya.
 - **Qué hacer:** reescribir desde cero. Remover toda referencia a usar Anthropic desde el frontend.
 
-### `FE-003` Pasar el rubro al chat de presupuestos
+### `FE-003` ✅ HECHO (2026-05-18) — Pasar el rubro al chat de presupuestos
 - **Dónde:** `pages/Presupuesto.jsx` + `services/api.js` (o `claude.js`).
 - **Por qué:** el backend va a aceptar `categoriaSlug` (BE-004). El frontend debe enviarlo.
 - **UX propuesto:** selector arriba del chat ("¿Para qué rubro?") con las categorías cargadas desde `/api/categorias`.
@@ -184,4 +184,5 @@ Hay tokens en `global.css`. Sumar toggle. Persistir en localStorage.
 
 ## Hechas
 
-(vacío)
+### 2026-05-18 · Multi-rubro en chat
+- **FE-003** — Selector de rubro en `/presupuesto`. Carga categorías desde `/api/categorias` y manda `categoriaSlug` al backend. Cambiar de rubro NO limpia el chat (afecta el próximo mensaje).

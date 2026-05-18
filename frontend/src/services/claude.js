@@ -29,7 +29,7 @@ Consideraciones:
 - Tipos de usuario: particular (hogar), comercio, industria
 - Sé conciso pero útil`
 
-export async function askClaude(messages, userType = 'particular') {
+export async function askClaude(messages, userType = 'particular', categoriaSlug) {
   const apiKey = import.meta.env.VITE_ANTHROPIC_KEY
   const apiUrl = import.meta.env.VITE_API_URL
 
@@ -38,7 +38,7 @@ export async function askClaude(messages, userType = 'particular') {
     const res = await fetch(`${apiUrl}/api/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages, userType }),
+      body: JSON.stringify({ messages, userType, categoriaSlug }),
     })
     if (!res.ok) throw new Error('Error del servidor')
     return res.json()

@@ -6,36 +6,28 @@
 
 import { Router } from 'express'
 import Anthropic from '@anthropic-ai/sdk'
+import { PrismaClient } from '@prisma/client'
 import { leerCachePrecios, scrapearPrecios } from '../services/scraper.js'
 
 const router = Router()
+const prisma = new PrismaClient()
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Obtener precios (desde cache o scrapear si no hay)
-// ─────────────────────────────────────────────────────────────────────────────
+// Rubros que usan la tabla CMO de electroinstalador (hoy: solo electricistas).
+// Cuando sumemos otros scrapers (BE-022), este Set crece.
+const RUBROS_CON_TABLA_CMO = new Set(['profesional'])
+
 async function obtenerPrecios() {
   let cache = await leerCachePrecios()
-
   if (!cache) {
     console.log('[Chat] No hay cache de precios — iniciando scraping...')
     cache = await scrapearPrecios()
   }
-
   return cache
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Construir system prompt con precios actualizados
-// ─────────────────────────────────────────────────────────────────────────────
-function buildSystemPrompt(textoPrecios, userType, fechaActualizacion) {
-  const fecha = new Date(fechaActualizacion).toLocaleDateString('es-AR', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-  })
-
-  const esProfesional = userType === 'profesional'
-
-  const instruccionesProfesional = esProfesional ? `
+function bloqueModoUsuario(userType) {
+  if (userType === 'profesional') return `
 MODO PROFESIONAL ACTIVO:
 - El usuario ES el profesional que va a realizar el trabajo
 - Generá un presupuesto más detallado y profesional
@@ -43,19 +35,21 @@ MODO PROFESIONAL ACTIVO:
 - Separar claramente: mano de obra, materiales, y subtotales
 - Agregá una línea de "Validez del presupuesto: 7 días"
 - Mencioná que el presupuesto no incluye imprevistos
-- Usá lenguaje técnico apropiado para un profesional
-` : `
+- Usá lenguaje técnico apropiado para un profesional`
+  return `
 MODO CLIENTE ACTIVO:
 - El usuario es un particular que necesita el trabajo
 - Usá lenguaje simple y claro
-- Explicá brevemente en qué consiste el trabajo
-`
+- Explicá brevemente en qué consiste el trabajo`
+}
 
-  return `Sos el asistente de Tu Profesional, plataforma argentina de presupuestos.
+function promptConTablaCMO({ textoPrecios, userType, fecha, rubroNombre }) {
+  return `Sos el asistente de Profi, plataforma argentina de presupuestos.
 Tu rol es calcular presupuestos de mano de obra orientativos usando la tabla de precios actualizada.
 
+RUBRO: ${rubroNombre}
 TIPO DE USUARIO: ${userType}
-${instruccionesProfesional}
+${bloqueModoUsuario(userType)}
 
 ${textoPrecios}
 
@@ -74,26 +68,81 @@ INSTRUCCIONES:
 Respondé SOLO con JSON válido, sin markdown, sin backticks:
 {"texto":"explicación","items":[{"label":"ítem × cantidad","val":"$XX.XXX"}],"total":"$XX.XXX – $XX.XXX","notas":"aclaraciones"}`
 }
+
+function promptSinTabla({ userType, rubroNombre }) {
+  const fechaHoy = new Date().toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  return `Sos el asistente de Profi, plataforma argentina de presupuestos.
+Tu rol es calcular presupuestos de mano de obra orientativos para distintos rubros.
+
+RUBRO: ${rubroNombre}
+TIPO DE USUARIO: ${userType}
+${bloqueModoUsuario(userType)}
+
+IMPORTANTE:
+- No hay tabla de precios oficial cargada para este rubro. Estimá con conocimiento general del mercado argentino, ${fechaHoy}.
+- Los valores deben ser realistas en pesos argentinos para ${rubroNombre.toLowerCase()} a la fecha actual.
+- Siempre devolvé un rango "$mín – $máx" (no un valor único).
+- Aclaralo siempre en "notas": "Valores estimados sin tabla oficial — verificá con varios profesionales del rubro".
+
+INSTRUCCIONES:
+1. Analizá el trabajo descripto.
+2. Separá los costos en mano de obra y materiales.
+3. Estimá tiempos cuando aplique (horas o jornadas).
+4. Si requiere matrícula habilitante (ej. gasista, electricista), mencionalo en notas.
+5. Respondé SOLO con JSON válido, sin markdown, sin backticks.
+
+Formato:
+{"texto":"explicación","items":[{"label":"ítem","val":"$X.XXX – $Y.XXX"}],"total":"$X.XXX – $Y.XXX","notas":"aclaraciones"}`
+}
+
+async function resolverRubro(categoriaSlug) {
+  if (!categoriaSlug) return { slug: 'profesional', nombre: 'Electricista' }
+  const cat = await prisma.categoria.findUnique({
+    where: { slug: categoriaSlug },
+    select: { slug: true, nombre: true },
+  })
+  if (!cat) return { slug: 'profesional', nombre: 'Electricista' }
+  return cat
+}
 // ─────────────────────────────────────────────────────────────────────────────
 // POST /api/chat
 // ─────────────────────────────────────────────────────────────────────────────
 router.post('/', async (req, res) => {
   try {
-    const { messages, userType = 'particular', modo } = req.body
+    const { messages, userType = 'particular', modo, categoriaSlug } = req.body
     const tipoEfectivo = modo === 'presupuesto_profesional' ? 'profesional' : userType
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: 'El campo messages es requerido y debe ser un array' })
     }
 
-    // Obtener precios actualizados
-    const cache = await obtenerPrecios()
+    const rubro = await resolverRubro(categoriaSlug)
+    const usaTablaCMO = RUBROS_CON_TABLA_CMO.has(rubro.slug)
 
-    // Llamar a Claude con los precios inyectados
+    let systemPrompt
+    let meta = { categoriaSlug: rubro.slug, categoriaNombre: rubro.nombre, conTablaOficial: usaTablaCMO }
+
+    if (usaTablaCMO) {
+      const cache = await obtenerPrecios()
+      const fecha = new Date(cache.actualizadoEn).toLocaleDateString('es-AR', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+      })
+      systemPrompt = promptConTablaCMO({
+        textoPrecios: cache.textoPlano,
+        userType: tipoEfectivo,
+        fecha,
+        rubroNombre: rubro.nombre,
+      })
+      meta.preciosActualizados = cache.actualizadoEn
+      meta.fuente = cache.fuente
+    } else {
+      systemPrompt = promptSinTabla({ userType: tipoEfectivo, rubroNombre: rubro.nombre })
+    }
+
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-5',
       max_tokens: 1024,
-      system: buildSystemPrompt(cache.textoPlano, tipoEfectivo, cache.actualizadoEn),
+      system: systemPrompt,
       messages: messages.map(m => ({
         role: m.role,
         content: typeof m.content === 'string' ? m.content : (m.ui?.text || ''),
@@ -110,14 +159,7 @@ router.post('/', async (req, res) => {
       parsed = { texto: clean, items: [], total: '', notas: '' }
     }
 
-    // Agregar metadata de precios en la respuesta
-    return res.json({
-      ...parsed,
-      _meta: {
-        preciosActualizados: cache.actualizadoEn,
-        fuente: cache.fuente,
-      },
-    })
+    return res.json({ ...parsed, _meta: meta })
 
   } catch (error) {
     console.error('[Chat] Error:', error.message)

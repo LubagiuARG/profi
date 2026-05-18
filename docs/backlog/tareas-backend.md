@@ -25,7 +25,7 @@
 - **Por qué P0:** afecta lo que ven clientes finales (texto de Claude, descripción de la suscripción en MP).
 - **Qué hacer:** reemplazar "ElectroAR" → "Profi" en todos los strings user-facing. NO renombrar todavía la tabla `Electricista` ni rutas (eso es P1).
 
-### `BE-004` Multi-rubro en `/api/chat`
+### `BE-004` ✅ HECHO (2026-05-18) — Multi-rubro en `/api/chat`
 - **Dónde:** `routes/chat.js`
 - **Problema:** El prompt asume rubro electricista. Si un cliente pregunta por una pérdida de gas o pintura, devuelve respuesta incoherente con la tabla CMO.
 - **Qué hacer:**
@@ -229,6 +229,9 @@ Hoy se parsea con `try/catch`. Sumar `response_format` o tool calling para forza
 - **BE-002** — Borrado el endpoint legacy `PATCH /api/profesionales/:id/plan` con monto $8.900 hardcoded. El único flujo de plan vive en el webhook MP a $20.000.
 - **BE-016** — Crash en startup si falta `JWT_SECRET` (`server.js`). Removido el default `'electro-ar-secret-key'` de `middleware/auth.js`. Refactor de `/api/auth/me` para usar el `authMiddleware` en vez de duplicar la lógica.
 - **BE-017** — Idempotencia del webhook: chequea `mpPaymentId` antes de crear `Pago` duplicado.
+
+### 2026-05-18 · Multi-rubro en chat
+- **BE-004** — `/api/chat` acepta `categoriaSlug`. Resuelve la categoría contra la DB. Si el slug está en `RUBROS_CON_TABLA_CMO` usa la tabla CMO + prompt actual; sino usa un prompt genérico que aclara "estimaciones sin tabla oficial". `_meta` incluye `categoriaSlug`, `categoriaNombre` y `conTablaOficial`.
 
 ### Pre-existentes (encontrados ya hechos al revisar el código)
 - **BE-013** — Modelo Prisma ya se llama `Profesional`, no `Electricista`.
