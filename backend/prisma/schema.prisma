@@ -27,6 +27,8 @@ model Profesional {
   rating         Float    @default(0)
   reviews        Int      @default(0)
   visitas        Int      @default(0)
+  solicitudesUsadasMes Int       @default(0)
+  solicitudesResetEn   DateTime?
   creadoEn       DateTime @default(now())
   actualizadoEn  DateTime @updatedAt
   categoriaId    Int?
@@ -126,12 +128,13 @@ model Pago {
 }
 
 model Resena {
-  id             Int      @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   profesionalId Int
-  autor          String
-  rating         Int
-  comentario     String?
-  creadoEn       DateTime @default(now())
+  solicitudId   Int?     @unique
+  autor         String
+  rating        Int
+  comentario    String?
+  creadoEn      DateTime @default(now())
 
   profesional Profesional @relation(fields: [profesionalId], references: [id])
 }

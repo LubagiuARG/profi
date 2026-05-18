@@ -11,9 +11,16 @@ import { enviarEmail } from '../services/email.js'
 const router = Router()
 const prisma = new PrismaClient()
 
-const EXPIRACION_DIAS  = 7
-const MAX_PROS_PEDIDO  = 3
-const SUGERENCIAS_TOP  = 6
+const EXPIRACION_DIAS    = 7
+const MAX_PROS_PEDIDO    = 3
+const SUGERENCIAS_TOP    = 6
+const LEADS_FREE_POR_MES = 3
+
+// Primer día del mes siguiente a la fecha actual
+function proximoReset() {
+  const ahora = new Date()
+  return new Date(ahora.getFullYear(), ahora.getMonth() + 1, 1)
+}
 
 // POST /api/solicitudes/sugerencias
 // Devuelve top N profesionales para un presupuesto + ubicación.
@@ -104,35 +111,64 @@ router.post('/', async (req, res) => {
 
     const profesionalesValidos = await prisma.profesional.findMany({
       where: { id: { in: profesionalIds.map(Number) }, activo: true },
-      select: { id: true, nombre: true, email: true, telefono: true },
+      select: {
+        id: true, nombre: true, email: true, telefono: true,
+        plan: true, solicitudesUsadasMes: true, solicitudesResetEn: true,
+      },
     })
     if (!profesionalesValidos.length) {
       return res.status(400).json({ error: 'Ninguno de los profesionales seleccionados está disponible' })
     }
 
+    // Lazy reset del contador mensual + decidir qué solicitudes van a cola (BE-048)
+    const ahora = new Date()
+    const reset = proximoReset()
+    const decisiones = profesionalesValidos.map(pro => {
+      const usadas = pro.solicitudesResetEn && pro.solicitudesResetEn < ahora ? 0 : pro.solicitudesUsadasMes
+      const enCola = pro.plan === 'free' && usadas >= LEADS_FREE_POR_MES
+      return { pro, usadas, enCola }
+    })
+
     const expiraEn = new Date(Date.now() + EXPIRACION_DIAS * 24 * 60 * 60 * 1000)
 
-    const solicitudes = await prisma.$transaction(
-      profesionalesValidos.map(pro =>
-        prisma.solicitud.create({
-          data: {
-            clienteId:           cliente.id,
-            clienteNombre:       nombre,
-            clienteTelefono:     telefono,
-            clienteEmail:        email || null,
-            profesionalId:       pro.id,
-            categoriaId:         categoria.id,
-            presupuestoSnapshot,
-            mensajeExtra:        mensajeExtra || null,
-            ubicacion:           ubicacion || null,
-            expiraEn,
-          },
-        })
-      )
+    const operaciones = decisiones.map(({ pro, enCola }) =>
+      prisma.solicitud.create({
+        data: {
+          clienteId:           cliente.id,
+          clienteNombre:       nombre,
+          clienteTelefono:     telefono,
+          clienteEmail:        email || null,
+          profesionalId:       pro.id,
+          categoriaId:         categoria.id,
+          presupuestoSnapshot,
+          mensajeExtra:        mensajeExtra || null,
+          ubicacion:           ubicacion || null,
+          estado:              enCola ? 'pendiente_cola' : 'pendiente',
+          expiraEn,
+        },
+      })
     )
 
-    // Email a cada pro (mock en dev)
-    for (const pro of profesionalesValidos) {
+    // Updates al contador del profesional (solo para los que NO van a cola)
+    for (const { pro, usadas, enCola } of decisiones) {
+      if (enCola) continue
+      operaciones.push(prisma.profesional.update({
+        where: { id: pro.id },
+        data:  {
+          solicitudesUsadasMes: usadas + 1,
+          solicitudesResetEn:   pro.solicitudesResetEn && pro.solicitudesResetEn > ahora
+            ? pro.solicitudesResetEn
+            : reset,
+        },
+      }))
+    }
+
+    const resultado = await prisma.$transaction(operaciones)
+    const solicitudes = resultado.filter(r => 'estado' in r) // las creaciones
+
+    // Email solo a los pros que NO quedaron en cola
+    for (const { pro, enCola } of decisiones) {
+      if (enCola) continue
       enviarEmail(pro.email, 'solicitud-nueva', {
         proNombre: pro.nombre,
         clienteNombre: nombre,
@@ -144,10 +180,14 @@ router.post('/', async (req, res) => {
       })
     }
 
+    const enviadas = decisiones.filter(d => !d.enCola).length
+    const enColaCount = decisiones.length - enviadas
+
     return res.status(201).json({
       ok: true,
-      solicitudes: solicitudes.map(s => ({ id: s.id, profesionalId: s.profesionalId })),
+      solicitudes: solicitudes.map(s => ({ id: s.id, profesionalId: s.profesionalId, estado: s.estado })),
       expiraEn,
+      resumen: { enviadas, enCola: enColaCount },
     })
   } catch (error) {
     console.error('[Solicitudes] Error crear:', error.message)

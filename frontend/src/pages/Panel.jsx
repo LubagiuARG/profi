@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
+import { createPortal }        from 'react-dom'
 import { useNavigate }         from 'react-router-dom'
 import { useAuth }             from '../context/AuthContext'
 import SelectorUbicacion       from '../components/SelectorUbicacion'
 import Loader                  from '../components/Loader'
 import ErrorState              from '../components/ErrorState'
-import { getSolicitudesPanel, aceptarSolicitud, rechazarSolicitud } from '../services/api'
+import { getSolicitudesPanel, aceptarSolicitud, rechazarSolicitud, cerrarSolicitud } from '../services/api'
 import styles                  from './Panel.module.css'
 
 const API = import.meta.env.VITE_API_URL
@@ -41,6 +42,11 @@ function TabResumen({ profesional, getToken }) {
     })
   }
 
+  const esFree = stats?.plan === 'free'
+  const usadas = stats?.solicitudesUsadasMes || 0
+  const limite = stats?.solicitudesLimiteFree ?? 3
+  const enLimite = esFree && usadas >= limite
+
   return (
     <div className={styles.tabContent}>
       <div className={styles.statsGrid}>
@@ -60,7 +66,25 @@ function TabResumen({ profesional, getToken }) {
           <div className={styles.statNum}>{stats?.plan?.toUpperCase() || 'FREE'}</div>
           <div className={styles.statLabel}>Plan actual</div>
         </div>
+        <div className={`${styles.statCard} ${enLimite ? styles.statWarn : ''}`}>
+          <div className={styles.statNum}>
+            {esFree ? `${usadas} / ${limite}` : '∞'}
+          </div>
+          <div className={styles.statLabel}>
+            {esFree ? 'Solicitudes este mes' : 'Solicitudes (PRO)'}
+          </div>
+        </div>
       </div>
+
+      {enLimite && (
+        <div className={styles.upgradeBanner}>
+          <div>
+            <strong>Llegaste al tope de solicitudes este mes</strong>
+            <span> — Las próximas que te lleguen quedan en cola sin notificación. Pasate a PRO para ilimitadas.</span>
+          </div>
+          <a href="/registro" className="btn btn-primary">Pasar a PRO →</a>
+        </div>
+      )}
 
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
@@ -328,6 +352,19 @@ function TabSolicitudes({ getToken }) {
     }
   }
 
+  const cerrar = async (id) => {
+    if (!confirm('¿Confirmás que el trabajo está terminado? Le vamos a pedir al cliente que te deje una reseña.')) return
+    setAccion(id)
+    try {
+      await cerrarSolicitud(getToken(), id)
+      cargar()
+    } catch (err) {
+      alert(err.message)
+    } finally {
+      setAccion(null)
+    }
+  }
+
   if (cargando) return <div className={styles.tabContent}><Loader /></div>
   if (error)    return <div className={styles.tabContent}><ErrorState mensaje={error} onRetry={cargar} /></div>
 
@@ -399,15 +436,40 @@ function TabSolicitudes({ getToken }) {
               </div>
             )}
 
+            {s.estado === 'pendiente_cola' && (
+              <div className={styles.solRechazo} style={{ background: '#ede9fe', color: '#5b21b6', borderLeftColor: '#7c3aed' }}>
+                <strong>En cola.</strong> Ya alcanzaste el tope de solicitudes del mes en tu plan FREE.
+                Esta no se notificó pero queda registrada — pasá a PRO para destrabarla.
+              </div>
+            )}
+
             {s.estado === 'aceptada' && (
+              <>
+                <div className={styles.solContacto}>
+                  <strong>📞 Contacto del cliente:</strong> {s.clienteTelefono}
+                  {s.clienteEmail && <> · {s.clienteEmail}</>}
+                  {waLink && (
+                    <a href={waLink} target="_blank" rel="noreferrer" className={`btn btn-outline ${styles.solWaBtn}`}>
+                      💬 Escribir por WhatsApp
+                    </a>
+                  )}
+                </div>
+                <div className={styles.solAcciones}>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => cerrar(s.id)}
+                    disabled={accion === s.id}
+                  >
+                    {accion === s.id ? 'Cerrando...' : '✓ Marcar trabajo terminado'}
+                  </button>
+                </div>
+              </>
+            )}
+
+            {s.estado === 'cerrada' && (
               <div className={styles.solContacto}>
-                <strong>📞 Contacto del cliente:</strong> {s.clienteTelefono}
-                {s.clienteEmail && <> · {s.clienteEmail}</>}
-                {waLink && (
-                  <a href={waLink} target="_blank" rel="noreferrer" className={`btn btn-outline ${styles.solWaBtn}`}>
-                    💬 Escribir por WhatsApp
-                  </a>
-                )}
+                <strong>✓ Trabajo terminado.</strong> Le pedimos al cliente que te deje una reseña.
+                {s.cerradoEn && <> · Cerrado el {fmtFecha(s.cerradoEn)}</>}
               </div>
             )}
 
@@ -439,7 +501,7 @@ function TabSolicitudes({ getToken }) {
         )
       })}
 
-      {rechazo && (
+      {rechazo && createPortal(
         <div className={styles.modalBackdrop} onClick={e => e.target === e.currentTarget && setRechazo(null)}>
           <div className={styles.modal}>
             <h3 className={styles.modalTitle}>Rechazar solicitud</h3>
@@ -464,7 +526,8 @@ function TabSolicitudes({ getToken }) {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )

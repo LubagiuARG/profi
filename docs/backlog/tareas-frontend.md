@@ -44,7 +44,7 @@
 
 ## 🟠 P1 — Importantes post-MVP
 
-### `FE-010` UI de reseñas
+### `FE-010` ✅ HECHO (2026-05-18) — UI de reseñas
 - **Depende de:** BE-010.
 - **Componentes:** `<EstrellasRating />` (display y selector), `<ReviewItem />`, `<FormReview />`.
 - **Dónde:** página de detalle del profesional (todavía no existe — `FE-014`).
@@ -186,6 +186,17 @@ Hay tokens en `global.css`. Sumar toggle. Persistir en localStorage.
 
 ### 2026-05-18 · Multi-rubro en chat
 - **FE-003** — Selector de rubro en `/presupuesto`. Carga categorías desde `/api/categorias` y manda `categoriaSlug` al backend. Cambiar de rubro NO limpia el chat (afecta el próximo mensaje).
+
+### 2026-05-18 · Cierre del ciclo + reseñas + límite FREE en UI
+- **Cerrar solicitud** — Panel tab "Solicitudes": botón "✓ Marcar trabajo terminado"
+  en solicitudes aceptadas. Confirma con prompt nativo. Después muestra mensaje
+  "Trabajo terminado · le pedimos al cliente que te deje una reseña".
+- **BE-048 UI** — Tab Resumen: 5ta stat card con "X/3 solicitudes este mes" (FREE)
+  o "∞ Solicitudes (PRO)". Si llegó al límite, banner amarillo con CTA "Pasar a PRO".
+  En tab Solicitudes, badge violeta `pendiente_cola` con explicación.
+- **FE-010** — Nueva página `/resena/:token` con form de estrellas (5, con
+  hover effect + emoji descriptivo), textarea comentario opcional (max 1000),
+  manejo de estados: ya reseñada / éxito / error / link inválido o expirado.
 
 ### 2026-05-18 · Lead matching UI
 - **FE-040** — Panel de sugerencias en `/presupuesto`: usa `POST /api/solicitudes/sugerencias`

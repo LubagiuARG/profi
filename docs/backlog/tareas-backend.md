@@ -51,7 +51,7 @@
 
 ## 🟠 P1 — Importantes post-MVP
 
-### `BE-010` Endpoints de reseñas (`/api/resenas`)
+### `BE-010` ✅ HECHO (2026-05-18) — Endpoints de reseñas (`/api/resenas`)
 - **Por qué:** modelo `Resena` existe pero sin rutas.
 - **Endpoints:**
   - `POST /api/resenas` — crea reseña (rate-limited, captcha o token corto desde la página del profesional)
@@ -203,7 +203,7 @@ Hoy se parsea con `try/catch`. Sumar `response_format` o tool calling para forza
 - **Borrado inmediato (24hs):** de verificaciones rechazadas.
 - **DB conserva:** estado, fecha, admin que aprobó, hash DNI. NO conserva las imágenes.
 
-### `BE-048` Limitar leads por plan
+### `BE-048` ✅ HECHO (2026-05-18) — Limitar leads por plan
 - **Por qué:** monetización — el FREE tiene que sentir el techo.
 - **Schema:** sumar `Profesional.solicitudesUsadasMes` + `solicitudesResetEn`.
 - **Lógica:** al crear `Solicitud` con destino FREE, chequear contador. Si llegó a 3 → encolar (estado `pendiente_cola`) sin notificar.
@@ -232,6 +232,18 @@ Hoy se parsea con `try/catch`. Sumar `response_format` o tool calling para forza
 
 ### 2026-05-18 · Multi-rubro en chat
 - **BE-004** — `/api/chat` acepta `categoriaSlug`. Resuelve la categoría contra la DB. Si el slug está en `RUBROS_CON_TABLA_CMO` usa la tabla CMO + prompt actual; sino usa un prompt genérico que aclara "estimaciones sin tabla oficial". `_meta` incluye `categoriaSlug`, `categoriaNombre` y `conTablaOficial`.
+
+### 2026-05-18 · Cierre del ciclo + reseñas + límite FREE
+- **Cerrar solicitud** — `PATCH /api/panel/solicitudes/:id/cerrar` (solo desde `aceptada`).
+  Trigger: token JWT de reseña (TTL 30d) + email mock al cliente con link `/resena/:token`.
+- **BE-048** — Schema `Profesional.solicitudesUsadasMes` + `solicitudesResetEn`. Lazy
+  reset al leer/crear. Solicitudes a un FREE que ya usó 3 caen a estado `pendiente_cola`
+  sin email. Reset automático el primer día del mes siguiente.
+  `GET /api/panel/stats` devuelve contador para mostrar en panel.
+- **BE-010** — `routes/resenas.js`: `GET /api/resenas/:token/info` (datos del pro + flag
+  `yaReseñada`) y `POST /api/resenas/:token` (rating 1-5 + comentario). Schema:
+  `Resena.solicitudId @unique` para 1 reseña por solicitud. Al crear, recalcula
+  `Profesional.rating` (promedio) y `Profesional.reviews` (count).
 
 ### 2026-05-18 · Lead matching (corazón del MVP)
 - **BE-040** — Modelo `Solicitud` + endpoints completos:

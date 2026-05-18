@@ -133,3 +133,25 @@ export function verificarTokenCliente(token) {
     return null
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Token de reseña — generado al cerrar una solicitud. TTL largo (30 días).
+// El cliente lo recibe en el mail con el link /resena/:token.
+// ─────────────────────────────────────────────────────────────────────────────
+export function generarTokenResena({ solicitudId, profesionalId }) {
+  return jwt.sign(
+    { tipo: 'resena', solicitudId, profesionalId },
+    process.env.JWT_SECRET,
+    { expiresIn: '30d' }
+  )
+}
+
+export function verificarTokenResena(token) {
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET)
+    if (payload.tipo !== 'resena') return null
+    return { solicitudId: payload.solicitudId, profesionalId: payload.profesionalId }
+  } catch {
+    return null
+  }
+}

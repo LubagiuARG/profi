@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { PrismaClient } from '@prisma/client'
 import { authMiddleware } from '../middleware/auth.js'
 import { enviarEmail } from '../services/email.js'
+import { generarTokenResena } from '../services/otp.js'
 
 const router = Router()
 const prisma = new PrismaClient()
@@ -18,9 +19,19 @@ router.get('/stats', async (req, res) => {
         visitas: true, rating: true, reviews: true,
         plan: true, verificado: true, vacaciones: true,
         creadoEn: true,
+        solicitudesUsadasMes: true,
+        solicitudesResetEn:   true,
       },
     })
-    return res.json(profesional)
+
+    // Lazy reset: si el período ya pasó, el contador efectivo es 0
+    const ahora = new Date()
+    const expirado = profesional?.solicitudesResetEn && profesional.solicitudesResetEn < ahora
+    return res.json({
+      ...profesional,
+      solicitudesUsadasMes: expirado ? 0 : profesional.solicitudesUsadasMes,
+      solicitudesLimiteFree: 3,
+    })
   } catch (error) {
     return res.status(500).json({ error: 'Error al obtener estadísticas' })
   }
@@ -193,6 +204,45 @@ router.patch('/solicitudes/:id/rechazar', async (req, res) => {
   } catch (error) {
     console.error('[Panel] Error rechazar solicitud:', error.message)
     return res.status(500).json({ error: 'Error al rechazar solicitud' })
+  }
+})
+
+// PATCH /api/panel/solicitudes/:id/cerrar — el pro marca el trabajo como terminado
+router.patch('/solicitudes/:id/cerrar', async (req, res) => {
+  try {
+    const sol = await buscarSolicitudPropia(req.params.id, req.profesionalId)
+    if (!sol) return res.status(404).json({ error: 'Solicitud no encontrada' })
+    if (sol.estado !== 'aceptada') {
+      return res.status(409).json({ error: `Solo se pueden cerrar solicitudes aceptadas (esta está ${sol.estado})` })
+    }
+
+    const actualizada = await prisma.solicitud.update({
+      where: { id: sol.id },
+      data:  { estado: 'cerrada', cerradoEn: new Date() },
+    })
+
+    // Token de reseña — sirve para que el cliente puntúe sin password
+    const tokenResena = generarTokenResena({
+      solicitudId:   sol.id,
+      profesionalId: req.profesionalId,
+    })
+    const linkResena = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/resena/${tokenResena}`
+
+    const pro = await prisma.profesional.findUnique({
+      where:  { id: req.profesionalId },
+      select: { nombre: true, apellido: true },
+    })
+
+    enviarEmail(sol.clienteEmail, 'solicitud-cerrada', {
+      clienteNombre: sol.clienteNombre,
+      proNombre:    `${pro.nombre} ${pro.apellido}`,
+      linkResena,
+    })
+
+    return res.json({ ok: true, solicitud: actualizada })
+  } catch (error) {
+    console.error('[Panel] Error cerrar solicitud:', error.message)
+    return res.status(500).json({ error: 'Error al cerrar solicitud' })
   }
 })
 

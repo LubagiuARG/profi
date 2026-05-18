@@ -76,3 +76,20 @@ export async function aceptarSolicitud(token, id) {
 export async function rechazarSolicitud(token, id, motivo) {
   return patchJson(`/api/panel/solicitudes/${id}/rechazar`, { motivo }, token)
 }
+
+export async function cerrarSolicitud(token, id) {
+  return patchJson(`/api/panel/solicitudes/${id}/cerrar`, null, token)
+}
+
+// ── Reseñas ────────────────────────────────────────────────────
+
+export async function getResenaInfo(token) {
+  const res = await fetch(`${API_URL}/api/resenas/${token}/info`)
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.error || 'Link inválido')
+  return data
+}
+
+export async function crearResena(token, { rating, comentario }) {
+  return postJson(`/api/resenas/${token}`, { rating, comentario })
+}

@@ -321,11 +321,17 @@
   flex-shrink: 0;
 }
 
-.solBadge_pendiente { background: #fff8e1; color: #8a6500; }
-.solBadge_aceptada  { background: #e8f5e9; color: #1e6b2a; }
-.solBadge_rechazada { background: #fdecea; color: #8a2622; }
-.solBadge_expirada  { background: #eee;    color: #666;    }
-.solBadge_cerrada   { background: #e0f2fe; color: #075985; }
+.solBadge_pendiente       { background: #fff8e1; color: #8a6500; }
+.solBadge_pendiente_cola  { background: #ede9fe; color: #5b21b6; }
+.solBadge_aceptada        { background: #e8f5e9; color: #1e6b2a; }
+.solBadge_rechazada       { background: #fdecea; color: #8a2622; }
+.solBadge_expirada        { background: #eee;    color: #666;    }
+.solBadge_cerrada         { background: #e0f2fe; color: #075985; }
+
+.statWarn {
+  border-color: #f5c518 !important;
+  background: #fff8e1 !important;
+}
 
 .solConsulta, .solTotal, .solMensaje, .solExpira, .solContacto, .solRechazo {
   font-size: 0.85rem;

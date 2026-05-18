@@ -169,7 +169,7 @@ export default function Presupuesto() {
   }, [])
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
   }, [messages, loading, mostrarProfesionales])
 
   useEffect(() => {

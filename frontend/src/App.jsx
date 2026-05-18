@@ -13,6 +13,7 @@ import Panel from './pages/Panel'
 import ComoFunciona from './pages/ComoFunciona'
 import Terminos from './pages/Terminos'
 import Privacidad from './pages/Privacidad'
+import Resena from './pages/Resena'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminCategorias from './pages/admin/AdminCategorias'
@@ -74,6 +75,7 @@ export default function App() {
               <Route path="/como-funciona" element={<ComoFunciona />} />
               <Route path="/terminos"      element={<Terminos />} />
               <Route path="/privacidad"    element={<Privacidad />} />
+              <Route path="/resena/:token" element={<Resena />} />
               <Route path="/panel"         element={
                 <RutaProtegida><Panel /></RutaProtegida>
               } />

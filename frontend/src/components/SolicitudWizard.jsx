@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { enviarOtpCliente, verificarOtpCliente, crearSolicitud } from '../services/api'
 import styles from './SolicitudWizard.module.css'
 
@@ -112,7 +113,7 @@ export default function SolicitudWizard({
     }
   }
 
-  return (
+  return createPortal(
     <div className={styles.backdrop} onClick={e => e.target === e.currentTarget && cerrar()}>
       <div className={styles.modal} role="dialog" aria-modal="true">
 
@@ -279,6 +280,7 @@ export default function SolicitudWizard({
         )}
 
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
