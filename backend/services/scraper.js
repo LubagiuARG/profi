@@ -1,5 +1,5 @@
 /**
- * ElectroAR — Scraper de precios CMO
+ * TuProfesional — Scraper de precios CMO
  * Fuente: electroinstalador.com/paginas/p43-cmo-listado-de-costos-de-mano-de-obra
  *
  * Parsea el HTML de la página y extrae los valores de mano de obra,

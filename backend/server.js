@@ -1,5 +1,5 @@
 /**
- * ElectroAR — Servidor principal
+ * TuProfesional — Servidor principal
  *
  * Incluye:
  * - API REST con Express
@@ -121,7 +121,7 @@ cron.schedule('0 3 * * *', async () => {
 // Arranque del servidor
 // ─────────────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`\n⚡ ElectroAR Backend corriendo en http://localhost:${PORT}`)
+  console.log(`\n⚡ TuProfesional Backend corriendo en http://localhost:${PORT}`)
   console.log(`   Entorno: ${process.env.NODE_ENV || 'development'}`)
   console.log(`   CORS permitido: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`)
   console.log('   Scraping automático: todos los días a las 3:00am (Argentina)\n')

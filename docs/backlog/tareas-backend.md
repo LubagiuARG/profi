@@ -20,7 +20,7 @@
   - Centralizar el monto en una constante `PLAN_PRO_MONTO_ARS` (mejor en una tabla `Plan` en DB).
   - Borrar la rama hardcoded de `electricistas.js:142-151` o redirigirla al flujo de MP.
 
-### `BE-003` Renombrar prompts/textos de "ElectroAR" en backend
+### `BE-003` ✅ HECHO (2026-05-18) — Renombrar prompts/textos de "ElectroAR" en backend
 - **Dónde:** `routes/chat.js:54`, `routes/suscripciones.js:17`, `server.js:113-117`.
 - **Por qué P0:** afecta lo que ven clientes finales (texto de Claude, descripción de la suscripción en MP).
 - **Qué hacer:** reemplazar "ElectroAR" → "Profi" en todos los strings user-facing. NO renombrar todavía la tabla `Electricista` ni rutas (eso es P1).
@@ -232,6 +232,9 @@ Hoy se parsea con `try/catch`. Sumar `response_format` o tool calling para forza
 
 ### 2026-05-18 · Multi-rubro en chat
 - **BE-004** — `/api/chat` acepta `categoriaSlug`. Resuelve la categoría contra la DB. Si el slug está en `RUBROS_CON_TABLA_CMO` usa la tabla CMO + prompt actual; sino usa un prompt genérico que aclara "estimaciones sin tabla oficial". `_meta` incluye `categoriaSlug`, `categoriaNombre` y `conTablaOficial`.
+
+### 2026-05-18 · Rebranding ElectroAR/Profi → TuProfesional
+- **BE-003** — Reemplazado "ElectroAR" y "Profi" por "TuProfesional" en strings user-facing: system prompts de `routes/chat.js`, `PLAN_NOMBRE` en `suscripciones.js`, log de startup en `server.js`, headers de archivos, `.env.example`, `package.json`, `README.md`. También removido el default `electro-ar-secret-key` en `middleware/adminAuth.js` (BE-016 incompleto).
 
 ### Pre-existentes (encontrados ya hechos al revisar el código)
 - **BE-013** — Modelo Prisma ya se llama `Profesional`, no `Electricista`.

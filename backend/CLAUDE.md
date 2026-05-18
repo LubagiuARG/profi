@@ -1,8 +1,8 @@
-# Profi · Backend
+# TuProfesional · Backend
 
-API REST + scraper para **Profi** — plataforma argentina de presupuestos y directorio de profesionales (electricistas, plomeros, gasistas, pintores, etc.).
+API REST + scraper para **TuProfesional** — plataforma argentina de presupuestos y directorio de profesionales (electricistas, plomeros, gasistas, pintores, etc.).
 
-> Antes se llamaba **ElectroAR**. Rebranding pendiente — ver [`../docs/06-rebranding.md`](../docs/06-rebranding.md).
+> Marca user-facing: **TuProfesional** (junto). El directorio se sigue llamando `profi/` por historia, pero strings, prompts y descripciones MP usan TuProfesional.
 
 ## Stack
 

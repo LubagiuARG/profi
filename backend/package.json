@@ -1,7 +1,7 @@
 {
-  "name": "electro-ar-backend",
+  "name": "tuprofesional-backend",
   "version": "1.0.0",
-  "description": "Backend de ElectroAR — API + Scraper de precios",
+  "description": "Backend de TuProfesional — API + Scraper de precios",
   "main": "server.js",
   "type": "module",
   "engines": {

@@ -1,6 +1,8 @@
-# 06 · Rebranding ElectroAR → Profi
+# 06 · Rebranding ElectroAR → TuProfesional
 
-El proyecto nació como **ElectroAR** (solo electricistas). Pivotamos a **Profi** (todos los oficios) pero el código viejo quedó.
+> **Decisión final (2026-05-18):** la marca user-facing es **TuProfesional** (junto, sin espacio). El nombre "Profi" que aparece en los docs anteriores está obsoleto — quedó como nombre interno del directorio (`profi/`) pero **no se usa en UI ni copy**.
+
+El proyecto nació como **ElectroAR** (solo electricistas). Después se pensó como **Profi** (todos los oficios). Terminó como **TuProfesional**.
 
 Esta es la checklist completa para que no quede ningún rastro visible al usuario final.
 

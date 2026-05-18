@@ -30,7 +30,7 @@ function Stars({ rating }) {
 function ElecCard({ elec }) {
   const nombre = `${elec.nombre} ${elec.apellido}`
   const iniciales = `${elec.nombre[0]}${elec.apellido[0]}`
-  const whatsappUrl = `https://wa.me/54${elec.telefono.replace(/\D/g,'')}?text=Hola%20${encodeURIComponent(nombre)}%2C%20te%20contacto%20desde%20DonVoltio.`
+  const whatsappUrl = `https://wa.me/54${elec.telefono.replace(/\D/g,'')}?text=Hola%20${encodeURIComponent(nombre)}%2C%20te%20contacto%20desde%20TuProfesional.`
 
   return (
     <div className={styles.card}>

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'electro-ar-secret-key'
+const JWT_SECRET = process.env.JWT_SECRET
 
 export function generarTokenAdmin(id, rol) {
   return jwt.sign({ id, rol, tipo: 'admin' }, JWT_SECRET, { expiresIn: '12h' })

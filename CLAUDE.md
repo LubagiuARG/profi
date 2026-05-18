@@ -1,8 +1,8 @@
-# Profi · Monorepo
+# TuProfesional · Monorepo
 
 Plataforma argentina de presupuestos con IA + directorio de profesionales (electricistas, plomeros, gasistas, etc.).
 
-> Antes se llamaba **ElectroAR**. Rebranding cosmético pendiente — ver [`docs/06-rebranding.md`](./docs/06-rebranding.md).
+> Marca user-facing: **TuProfesional** (junto). Originalmente ElectroAR (solo electricistas) y por un tiempo se pensó como "Profi" — quedaron menciones legacy a ambos. El directorio del repo se sigue llamando `profi/` por historia, pero todo lo visible al usuario es TuProfesional. Ver [`docs/06-rebranding.md`](./docs/06-rebranding.md).
 
 ## Estructura
 

@@ -1,5 +1,5 @@
 /**
- * ElectroAR — Ruta /api/suscripciones
+ * TuProfesional — Ruta /api/suscripciones
  * Maneja suscripciones recurrentes con MercadoPago
  */
 
@@ -15,7 +15,7 @@ const client  = new MercadoPagoConfig({
 })
 
 const PLAN_MONTO  = 20000
-const PLAN_NOMBRE = 'Tu profesional — Plan PRO'
+const PLAN_NOMBRE = 'TuProfesional — Plan PRO'
 const BACK_URL    = process.env.FRONTEND_URL || 'http://localhost:5173'
 
 // ─────────────────────────────────────────────────────────────────────────────

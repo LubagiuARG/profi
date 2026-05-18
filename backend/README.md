@@ -1,137 +1,71 @@
-# ⚡ ElectroAR — Backend
+# TuProfesional — Backend
 
-API REST + Scraper automático de precios CMO de ElectroInstalador.com
+API REST + scraper automático de precios CMO para **TuProfesional**, plataforma argentina de presupuestos con IA y directorio de profesionales (electricistas, plomeros, gasistas, pintores, etc.).
+
+Para detalles de stack, comandos y convenciones internas ver [`CLAUDE.md`](./CLAUDE.md).
+
+## Cómo arranca
+
+```bash
+npm install
+cp .env.example .env             # completar los valores
+npx prisma migrate dev           # aplicar migraciones contra DATABASE_URL
+node services/seed.js            # crear categorías + admin inicial
+
+npm run dev                      # puerto 3001 (o el de PORT)
+```
+
+Variables obligatorias para que arranque: `DATABASE_URL`, `JWT_SECRET` (el server crashea al inicio si falta alguna).
 
 ## Cómo funciona el scraper
 
-1. Al arrancar el servidor por primera vez, scrapea automáticamente la página de precios
-2. Guarda los precios en `cache/precios.json`
-3. Todos los días a las **3am (hora Argentina)** vuelve a scrapear y actualiza el cache
-4. Cada consulta al chat inyecta los precios actualizados en el prompt de Claude
-
-## Instalación y arranque
-
-```bash
-# 1. Instalar dependencias
-npm install
-
-# 2. Crear .env
-cp .env.example .env
-# → Editar .env con tu ANTHROPIC_API_KEY
-
-# 3. Correr en desarrollo
-npm run dev
-
-# 4. O hacer un scraping manual primero
-npm run scrape
-```
-
-El servidor queda en `http://localhost:3001`
+1. Al arrancar, si no hay `cache/precios.json` scrapea en segundo plano la página CMO de electroinstalador.com.
+2. Cron diario a las **3:00am (Argentina)** vuelve a scrapear.
+3. Cada consulta a `/api/chat` con rubro `profesional` (electricista) inyecta esos precios al system prompt.
+4. Otros rubros (plomero, gasista, pintor…) usan un prompt genérico — todavía no hay tabla oficial. Ver `BE-022` (multi-fuente) en el backlog.
 
 ## Endpoints
 
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| `GET`  | `/health` | Estado del servidor |
-| `POST` | `/api/chat` | Consulta al asistente IA |
-| `GET`  | `/api/precios/estado` | Estado del cache de precios |
-| `GET`  | `/api/precios/datos` | Ver todos los precios cacheados |
-| `POST` | `/api/precios/actualizar` | Disparar scraping manualmente |
+| Método | Ruta | Auth | Qué hace |
+|--------|------|------|----------|
+| `GET`  | `/health` | público | Estado del servidor |
+| `POST` | `/api/chat` | público | Presupuesto IA (acepta `categoriaSlug`) |
+| `GET`  | `/api/precios/estado` | público | Estado del cache de precios |
+| `GET`  | `/api/precios/datos` | público | Tabla CMO cacheada |
+| `POST` | `/api/precios/actualizar` | `x-admin-token` | Scraping manual |
+| `GET`  | `/api/categorias` | público | Listado de rubros activos |
+| `GET`  | `/api/profesionales` | público | Directorio con filtros |
+| `POST` | `/api/auth/registro` | público | Alta de profesional |
+| `POST` | `/api/auth/login` | público | Login profesional |
+| `GET`  | `/api/auth/me` | JWT pro | Perfil propio |
+| `POST` | `/api/suscripciones/crear` | público | Inicia PreApproval MP |
+| `POST` | `/api/suscripciones/webhook` | firma MP | Webhook MP (HMAC-SHA256) |
+| `POST` | `/api/admin/auth/login` | público | Login admin |
+| `*`    | `/api/admin/*` | JWT admin | Gestión admin |
 
-### Ejemplo de consulta al chat
+### Ejemplo: presupuesto IA para plomero
 
 ```bash
 curl -X POST http://localhost:3001/api/chat \
   -H "Content-Type: application/json" \
   -d '{
-    "messages": [{"role": "user", "content": "Quiero cambiar el tablero de mi casa"}],
-    "userType": "particular"
+    "messages": [{"role": "user", "content": "Reparar pérdida en el baño"}],
+    "userType": "particular",
+    "categoriaSlug": "plomero"
   }'
 ```
 
-Respuesta:
-```json
-{
-  "texto": "Para el cambio de tablero...",
-  "items": [
-    { "label": "Empotrado mampostería 1-24 bocas (CMO)", "val": "$185.300" },
-    { "label": "Diferencial + termomagnética x2 circuitos", "val": "$163.800" }
-  ],
-  "total": "$349.100 – $420.000",
-  "notas": "Requiere matricula habilitante. Materiales no incluidos.",
-  "_meta": {
-    "preciosActualizados": "2025-04-16T03:00:00.000Z",
-    "fuente": "https://www.electroinstalador.com/..."
-  }
-}
-```
+## Despliegue
 
-### Disparar scraping manual (con token de admin)
-
-```bash
-curl -X POST http://localhost:3001/api/precios/actualizar \
-  -H "x-admin-token: TU_ADMIN_TOKEN"
-```
-
-## Estructura
-
-```
-electro-ar-backend/
-├── server.js              # Entrada principal + cron job
-├── routes/
-│   ├── chat.js            # POST /api/chat — IA + precios
-│   └── precios.js         # GET/POST /api/precios/*
-├── services/
-│   └── scraper.js         # Lógica de scraping y parseo
-├── middleware/
-│   └── rateLimiter.js     # Rate limiting
-├── cache/
-│   └── precios.json       # Cache generado automáticamente
-├── .env.example
-└── package.json
-```
+Va a **Railway** desde el root del repo apuntando a `backend/`. Las variables se setean en el panel — `JWT_SECRET` y `DATABASE_URL` son obligatorias. Para que los webhooks de MP en prod no se rechacen, también seteá `MP_WEBHOOK_SECRET` (sacalo del panel MP → Webhooks → "Clave secreta").
 
 ## Seguridad implementada
 
-- **Helmet**: headers HTTP de seguridad
-- **CORS**: solo permite requests desde el frontend configurado
-- **Rate limiting**: 100 req/15min general, 10 req/min para el chat
-- **No expone la API key de Anthropic**: solo vive en el backend
+- Helmet + CORS whitelist + rate limit (100/15min global, 10/min `/api/chat`).
+- JWT obligatorio (sin default, crashea si falta).
+- Firma HMAC-SHA256 en webhook MP (rechaza 401 si no matchea o falta el secret en prod).
+- Idempotencia por `mpPaymentId` para evitar pagos duplicados.
 
-## Despliegue en producción
+## Backlog
 
-### Railway (recomendado, gratis para empezar)
-```bash
-# Instalar Railway CLI
-npm install -g @railway/cli
-
-# Deploy
-railway login
-railway init
-railway up
-railway variables set ANTHROPIC_API_KEY=sk-ant-...
-railway variables set FRONTEND_URL=https://tu-frontend.vercel.app
-```
-
-### Render
-1. Crear nuevo Web Service en render.com
-2. Conectar tu repo de GitHub
-3. Build command: `npm install`
-4. Start command: `node server.js`
-5. Agregar variables de entorno en el panel
-
-### VPS propio (DigitalOcean, Contabo, etc.)
-```bash
-# Con PM2 para que corra siempre
-npm install -g pm2
-pm2 start server.js --name electro-ar-backend
-pm2 save
-pm2 startup
-```
-
-## Importante sobre el scraper
-
-- Si ElectroInstalador cambia el HTML de su página, el parseo puede fallar
-- En ese caso el servidor usa el cache anterior y loggea un warning
-- El endpoint `POST /api/precios/actualizar` sirve para testear manualmente
-- Revisá los logs regularmente para detectar cambios en la estructura del sitio
+Las tareas concretas viven en [`../docs/backlog/tareas-backend.md`](../docs/backlog/tareas-backend.md).

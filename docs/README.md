@@ -1,8 +1,10 @@
-# Profi — Documentación de producto
+# TuProfesional — Documentación de producto
 
 Plataforma argentina de **presupuestos inteligentes con IA** y **directorio de profesionales verificados** (electricistas, plomeros, gasistas, pintores, albañiles, etc.).
 
-> Antes se llamaba **ElectroAR** y solo cubría electricistas. Hoy estamos pivotando a **Profi**, una marca paraguas para todos los rubros de oficios. Ver [`06-rebranding.md`](./06-rebranding.md).
+> Marca user-facing: **TuProfesional** (junto). Originalmente fue **ElectroAR** (solo electricistas) y por un tiempo se pensó como **Profi**; el directorio del repo se sigue llamando `profi/` por historia. Ver [`06-rebranding.md`](./06-rebranding.md).
+
+> ⚠️ Otros docs de esta carpeta (`02-scope-mvp.md`, `07-roadmap.md`, etc.) todavía mencionan "Profi" — son referencias internas obsoletas, no se usan en UI.
 
 ## Repos del proyecto
 
@@ -20,7 +22,7 @@ Plataforma argentina de **presupuestos inteligentes con IA** y **directorio de p
 3. [`03-stack.md`](./03-stack.md) — decisiones técnicas y por qué
 4. [`04-flujos.md`](./04-flujos.md) — flujos clave (cliente / profesional / admin)
 5. [`05-modelo-datos.md`](./05-modelo-datos.md) — entidades y relaciones
-6. [`06-rebranding.md`](./06-rebranding.md) — checklist ElectroAR → Profi
+6. [`06-rebranding.md`](./06-rebranding.md) — checklist ElectroAR → TuProfesional
 7. [`07-roadmap.md`](./07-roadmap.md) — fases e hitos
 
 ## Backlog

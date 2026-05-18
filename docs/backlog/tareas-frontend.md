@@ -4,7 +4,7 @@
 
 ## 🔴 P0 — Bloqueantes del MVP
 
-### `FE-001` Rebranding cosmético completo
+### `FE-001` ✅ HECHO (2026-05-18) — Rebranding cosmético completo
 - **Por qué:** la UI todavía dice ElectroAR en muchos lados.
 - **Qué cambiar:**
   - `package.json` `name`
@@ -16,7 +16,7 @@
   - Renombrar `pages/Electricistas.jsx` → `pages/Profesionales.jsx` y la ruta `/profesionales` (ya existe esa ruta, solo cambiar el componente)
 - **Checklist completo:** [`06-rebranding.md`](../06-rebranding.md).
 
-### `FE-002` 🐛 README desactualizado y confuso
+### `FE-002` ✅ HECHO (2026-05-18) — README desactualizado y confuso
 - **Dónde:** `electro-ar-frontend/README.md`
 - **Problema:**
   - Dice "conectar con backend" como TODO cuando ya está hecho.
@@ -186,3 +186,7 @@ Hay tokens en `global.css`. Sumar toggle. Persistir en localStorage.
 
 ### 2026-05-18 · Multi-rubro en chat
 - **FE-003** — Selector de rubro en `/presupuesto`. Carga categorías desde `/api/categorias` y manda `categoriaSlug` al backend. Cambiar de rubro NO limpia el chat (afecta el próximo mensaje).
+
+### 2026-05-18 · Rebranding ElectroAR/DonVoltio → TuProfesional
+- **FE-001** — Strings user-facing limpiados: `Registro.jsx` ("Plan PRO — ElectroAR" → TuProfesional), `Profesionales.jsx` (mensaje WhatsApp con "DonVoltio" → TuProfesional), `package.json` name. La mayoría del rebranding ya estaba hecho (Header, Footer, Home, AdminLayout, index.html).
+- **FE-002** — Reescrito `frontend/README.md` desde cero: eliminada toda referencia a `VITE_ANTHROPIC_KEY` (riesgo de seguridad), actualizada estructura, rutas y deploy. Reescrito también `services/claude.js` para eliminar la rama legacy con `VITE_ANTHROPIC_KEY` y "DonVoltio" en el system prompt — ahora solo pega al backend.

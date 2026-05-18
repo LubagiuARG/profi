@@ -134,7 +134,7 @@ function TabPresupuestos({ profesional, getToken }) {
     texto += `\n💰 *TOTAL ESTIMADO: ${r.total}*\n`
     if (r.notas) texto += `\n⚠️ _${r.notas}_\n`
     texto += `\n📞 Contacto: ${profesional?.telefono}`
-    texto += `\n🌐 Encontrame en ElectroAR`
+    texto += `\n🌐 Encontrame en TuProfesional`
     return texto
   }
 
@@ -163,7 +163,7 @@ function TabPresupuestos({ profesional, getToken }) {
           </style>
         </head>
         <body>
-          <h1>⚡ Presupuesto ElectroAR</h1>
+          <h1>⚡ Presupuesto TuProfesional</h1>
           <p><strong>Profesional:</strong> ${profesional?.nombre} ${profesional?.apellido}</p>
           <p><strong>Trabajo:</strong> ${resultado?.consulta}</p>
           <p><strong>Teléfono:</strong> ${profesional?.telefono}</p>
@@ -178,7 +178,7 @@ function TabPresupuestos({ profesional, getToken }) {
           <div class="total">TOTAL ESTIMADO: ${resultado?.total}</div>
           ${resultado?.notas ? `<p class="nota">⚠️ ${resultado.notas}</p>` : ''}
           <div class="footer">
-            <p>Presupuesto generado con ElectroAR · Valores orientativos según CMO ElectroInstalador.com</p>
+            <p>Presupuesto generado con TuProfesional · Valores orientativos según CMO ElectroInstalador.com</p>
             <p>No incluye materiales salvo indicación. Válido por 7 días.</p>
           </div>
         </body>

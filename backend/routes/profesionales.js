@@ -1,5 +1,5 @@
 /**
- * ElectroAR — Ruta /api/profesionales
+ * TuProfesional — Ruta /api/profesionales
  * CRUD de profesionales con Prisma + PostgreSQL
  */
 

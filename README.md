@@ -1,8 +1,8 @@
-# Profi
+# TuProfesional
 
 Plataforma argentina de **presupuestos con IA** y **directorio de profesionales verificados** (electricistas, plomeros, gasistas, pintores, etc.).
 
-> Antes se llamaba **ElectroAR**. Rebranding cosmético pendiente — ver [`docs/06-rebranding.md`](./docs/06-rebranding.md).
+> Marca user-facing: **TuProfesional** (junto). El directorio del repo se sigue llamando `profi/` por historia. Originalmente fue ElectroAR (solo electricistas). Ver [`docs/06-rebranding.md`](./docs/06-rebranding.md).
 
 ## Estructura del monorepo
 
@@ -77,6 +77,6 @@ Ver [`docs/`](./docs/). Punto de entrada: [`docs/README.md`](./docs/README.md).
 - [`docs/03-stack.md`](./docs/03-stack.md) — decisiones técnicas
 - [`docs/04-flujos.md`](./docs/04-flujos.md) — flujos clave
 - [`docs/05-modelo-datos.md`](./docs/05-modelo-datos.md) — entidades
-- [`docs/06-rebranding.md`](./docs/06-rebranding.md) — checklist ElectroAR → Profi
+- [`docs/06-rebranding.md`](./docs/06-rebranding.md) — checklist ElectroAR → TuProfesional
 - [`docs/07-roadmap.md`](./docs/07-roadmap.md) — fases
 - [`docs/backlog/`](./docs/backlog/) — tareas vivas (`backlog.csv` importable a GitHub Projects / Linear)

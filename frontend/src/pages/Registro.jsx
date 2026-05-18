@@ -348,7 +348,7 @@ export default function Registro() {
               <h3 className={styles.formTitle}>Resumen del pago</h3>
               <div className={styles.paymentSummary}>
                 <div className={styles.paymentRow}>
-                  <span>Plan PRO — ElectroAR</span>
+                  <span>Plan PRO — TuProfesional</span>
                   <span className={styles.paymentAmount}>$15.000/mes</span>
                 </div>
                 <div className={styles.paymentRow}>

@@ -1,8 +1,8 @@
-# Profi · Frontend
+# TuProfesional · Frontend
 
-Web pública de **Profi** — plataforma argentina de presupuestos con IA y directorio de profesionales.
+Web pública de **TuProfesional** — plataforma argentina de presupuestos con IA y directorio de profesionales.
 
-> Antes se llamaba **ElectroAR**. Rebranding pendiente — ver [`../docs/06-rebranding.md`](../docs/06-rebranding.md).
+> Marca user-facing: **TuProfesional** (junto). El directorio se sigue llamando `profi/` por historia, pero todo lo visible al usuario (Header, Footer, copy, Admin panel) usa TuProfesional.
 
 ## Stack
 

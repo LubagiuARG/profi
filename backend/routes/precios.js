@@ -1,5 +1,5 @@
 /**
- * ElectroAR — Ruta /api/precios
+ * TuProfesional — Ruta /api/precios
  * Permite consultar el estado del cache y disparar un scraping manual.
  */
 

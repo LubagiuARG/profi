@@ -1,5 +1,5 @@
 /**
- * ElectroAR — Ruta /api/chat
+ * TuProfesional — Ruta /api/chat
  * Recibe la consulta del usuario, inyecta los precios actualizados
  * del scraper en el system prompt de Claude y retorna el presupuesto.
  */
@@ -44,7 +44,7 @@ MODO CLIENTE ACTIVO:
 }
 
 function promptConTablaCMO({ textoPrecios, userType, fecha, rubroNombre }) {
-  return `Sos el asistente de Profi, plataforma argentina de presupuestos.
+  return `Sos el asistente de TuProfesional, plataforma argentina de presupuestos.
 Tu rol es calcular presupuestos de mano de obra orientativos usando la tabla de precios actualizada.
 
 RUBRO: ${rubroNombre}
@@ -71,7 +71,7 @@ Respondé SOLO con JSON válido, sin markdown, sin backticks:
 
 function promptSinTabla({ userType, rubroNombre }) {
   const fechaHoy = new Date().toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' })
-  return `Sos el asistente de Profi, plataforma argentina de presupuestos.
+  return `Sos el asistente de TuProfesional, plataforma argentina de presupuestos.
 Tu rol es calcular presupuestos de mano de obra orientativos para distintos rubros.
 
 RUBRO: ${rubroNombre}
