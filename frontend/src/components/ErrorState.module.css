@@ -1,0 +1,44 @@
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 2.5rem 1rem;
+  color: var(--ink, #1a1a1a);
+}
+
+.icono {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.titulo {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0.25rem 0 0;
+}
+
+.mensaje {
+  font-size: 0.88rem;
+  color: var(--ink2, #6b6b6b);
+  max-width: 420px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.retryBtn {
+  margin-top: 0.85rem;
+  background: var(--ink, #1a1a1a);
+  color: var(--card, #fff);
+  border: none;
+  border-radius: 8px;
+  padding: 0.55rem 1.1rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.retryBtn:hover { opacity: 0.85; }

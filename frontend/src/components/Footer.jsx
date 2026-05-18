@@ -21,7 +21,7 @@ export default function Footer() {
             <span className={styles.colTitle}>Para clientes</span>
             <NavLink to="/profesionales" className={styles.link}>Buscar profesionales</NavLink>
             <NavLink to="/presupuesto" className={styles.link}>Presupuesto IA</NavLink>
-            <NavLink to="/#como-funciona" className={styles.link}>Cómo funciona</NavLink>
+            <NavLink to="/como-funciona" className={styles.link}>Cómo funciona</NavLink>
           </div>
           <div className={styles.col}>
             <span className={styles.colTitle}>Para profesionales</span>
@@ -31,9 +31,8 @@ export default function Footer() {
           </div>
           <div className={styles.col}>
             <span className={styles.colTitle}>Legal</span>
-            <a href="#" className={styles.link}>Términos de uso</a>
-            <a href="#" className={styles.link}>Privacidad</a>
-            <a href="#" className={styles.link}>Cookies</a>
+            <NavLink to="/terminos" className={styles.link}>Términos de uso</NavLink>
+            <NavLink to="/privacidad" className={styles.link}>Privacidad</NavLink>
           </div>
         </div>
       </div>

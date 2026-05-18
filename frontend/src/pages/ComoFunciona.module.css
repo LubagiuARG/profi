@@ -1,0 +1,124 @@
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  animation: fadeUp 0.35s ease both;
+}
+
+.hero {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1.5rem 0 2.5rem;
+}
+
+.titulo {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.sub {
+  font-size: 1rem;
+  color: var(--ink2);
+  max-width: 560px;
+  line-height: 1.6;
+}
+
+.bloque {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.25rem 1.75rem;
+  margin: 1.5rem 0;
+  box-shadow: var(--shadow-md, 0 4px 20px rgba(0,0,0,0.04));
+}
+
+.bloqueDark {
+  background: var(--ink, #1a1a1a);
+  border-color: transparent;
+  color: var(--card, #fff);
+}
+
+.bloqueDark .pasoTitulo { color: var(--card, #fff); }
+.bloqueDark .pasoDesc   { color: rgba(255,255,255,0.75); }
+.bloqueDark .pasoNum    { color: rgba(255,255,255,0.4); }
+
+.bloqueTitulo {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2.5vw, 1.7rem);
+  font-weight: 700;
+  margin: 0 0 1.75rem;
+  letter-spacing: -0.5px;
+  color: inherit;
+}
+
+.pasos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.paso {
+  padding: 0.5rem;
+}
+
+.pasoNum {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.85rem;
+  color: var(--ink2, #999);
+  letter-spacing: -1.5px;
+  margin-bottom: 0.5rem;
+}
+
+.pasoTitulo {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+  color: var(--ink);
+}
+
+.pasoDesc {
+  font-size: 0.92rem;
+  color: var(--ink2);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.bloqueDark .cta {
+  border-top-color: rgba(255,255,255,0.15);
+}
+
+.faqHint {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: var(--ink2);
+}
+
+.link {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

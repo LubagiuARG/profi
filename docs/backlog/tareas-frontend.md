@@ -28,15 +28,15 @@
 - **Por qué:** el backend va a aceptar `categoriaSlug` (BE-004). El frontend debe enviarlo.
 - **UX propuesto:** selector arriba del chat ("¿Para qué rubro?") con las categorías cargadas desde `/api/categorias`.
 
-### `FE-004` Página de "cómo funciona"
+### `FE-004` ✅ HECHO (2026-05-18) — Página de "cómo funciona"
 - **Por qué:** los clientes que llegan por SEO no entienden qué es Profi sin explicación.
 - **Contenido:** 3 pasos para clientes (pedir presupuesto / encontrar pro / contratar) + 3 pasos para profesionales (registro / pagar PRO / recibir consultas).
 
-### `FE-005` Términos y privacidad (páginas)
+### `FE-005` ✅ HECHO (2026-05-18) — Términos y privacidad (páginas)
 - **Por qué:** legal + AdSense.
 - **Qué hacer:** rutas `/terminos` y `/privacidad` con texto plano. Linkearlos desde el footer.
 
-### `FE-006` Estados de carga y error consistentes
+### `FE-006` ✅ HECHO (2026-05-18) — Estados de carga y error consistentes
 - **Por qué:** hoy `App.jsx:21` usa `<div style={{ padding: '2rem' }}>Cargando...</div>` inline. Funciona pero queda feo y disperso.
 - **Qué hacer:** componente `<Loader />` reutilizable + `<ErrorState />`. Reemplazar los inline.
 
@@ -186,6 +186,11 @@ Hay tokens en `global.css`. Sumar toggle. Persistir en localStorage.
 
 ### 2026-05-18 · Multi-rubro en chat
 - **FE-003** — Selector de rubro en `/presupuesto`. Carga categorías desde `/api/categorias` y manda `categoriaSlug` al backend. Cambiar de rubro NO limpia el chat (afecta el próximo mensaje).
+
+### 2026-05-18 · Páginas y UX faltantes
+- **FE-004** — Nueva página `/como-funciona` con 3 pasos para clientes y 3 para profesionales. Links del Header y Footer apuntan ahora a la ruta dedicada (antes iban a `/#como-funciona` ancla en Home).
+- **FE-005** — Páginas `/terminos` y `/privacidad` con texto base argentino (aviso explícito de "versión preliminar, falta revisión legal"). Footer linkea con `NavLink` en vez de `href="#"`. Comparten `LegalPage.module.css`.
+- **FE-006** — Componentes `<Loader />` (con `inline` y `size`) y `<ErrorState />` (con `onRetry`) reutilizables. Reemplazados los 3 `Cargando...` inline de `App.jsx` (`RutaProtegida`, `RutaAdmin`, `AdminRoot`).
 
 ### 2026-05-18 · Rebranding ElectroAR/DonVoltio → TuProfesional
 - **FE-001** — Strings user-facing limpiados: `Registro.jsx` ("Plan PRO — ElectroAR" → TuProfesional), `Profesionales.jsx` (mensaje WhatsApp con "DonVoltio" → TuProfesional), `package.json` name. La mayoría del rebranding ya estaba hecho (Header, Footer, Home, AdminLayout, index.html).

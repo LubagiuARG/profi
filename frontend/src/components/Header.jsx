@@ -35,7 +35,7 @@ export default function Header() {
           <NavLink to="/presupuesto" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink} onClick={() => setMenuOpen(false)}>
             Presupuesto IA
           </NavLink>
-          <NavLink to="/#como-funciona" className={styles.navLink} onClick={() => setMenuOpen(false)}>
+          <NavLink to="/como-funciona" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink} onClick={() => setMenuOpen(false)}>
             Cómo funciona
           </NavLink>
         </nav>
